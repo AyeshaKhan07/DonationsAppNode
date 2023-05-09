@@ -5,7 +5,7 @@ import { JWT_TOKEN } from '../constants';
 import { HTTP_STATUS } from '../shared/http-status-codes';
 
 // Whitelist of routes that do not require authentication
-const whitelist = ['/users/login', '/users/signup'];
+const whitelist = ['/api/login', '/api/signup'];
 
 export default (req: Request, res: Response, next: Next) => {
 

@@ -1,13 +1,14 @@
 import { Request, Response } from 'express';
 
-import { User } from "./user.entity";
-import UserRepository from './repository';
+import { User } from "../users/user.entity";
+import UserRepository from '../users/repository';
 import { generateAccessToken } from '../../utils/jwt';
 import { encryptTohashPassword } from '../../utils/crypto';
 import { HTTP_STATUS } from '../../shared/http-status-codes';
 
+class AuthController {
+    protected user = new User();
 
-export default {
     async signup(req: Request, res: Response) {
         const user = new User();
         const newUser = req.body;
@@ -33,27 +34,7 @@ export default {
                 error
             })
         }
-    },
-
-    async fetchAllUsers(req: Request, res: Response) {
-        try {
-            const users = await UserRepository.fetchAll();
-
-            res.send(users.length ?
-                {
-                    status: HTTP_STATUS.OK,
-                    users
-                } :
-                {
-                    status: HTTP_STATUS.NO_CONTENT,
-                    users
-                })
-        } catch (error) {
-            res.send({
-                error
-            })
-        }
-    },
+    }
 
     async loginUser(req: Request, res: Response) {
         const { email, password } = req.body;
@@ -88,5 +69,6 @@ export default {
             })
         }
     }
-
 }
+
+export default AuthController;

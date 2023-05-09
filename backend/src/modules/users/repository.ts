@@ -1,6 +1,6 @@
 import { User } from "./user.entity";
 import { connectionSource } from "../../database/data-source";
-import { CreateUserDto } from "./dto";
+import { CreateUserDto } from "../auth/dto";
 
 const userRepository = connectionSource.getRepository(User);
 
