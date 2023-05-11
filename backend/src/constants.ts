@@ -5,3 +5,7 @@ export const MIN_LENGTHS = {
     PASSWORD: 8,
     CONTACT: 10
 }
+
+export const MIN_VALUES = {
+    GOAL_AMOUNT: 1000
+}

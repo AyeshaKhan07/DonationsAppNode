@@ -1,5 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn, BeforeInsert } from "typeorm"
+import { Entity, Column, PrimaryGeneratedColumn, BeforeInsert, OneToMany } from "typeorm"
+
 import { encryptTohashPassword } from "../../utils/crypto"
+import { Fundraiser } from "../fundraisers/fundraiser.entity"
 
 @Entity('users')
 export class User {
@@ -40,5 +42,8 @@ export class User {
     async hashPassword() {
         this.password = await encryptTohashPassword(this.password);
     }
+
+    @OneToMany(() => Fundraiser, fundraiser => fundraiser.user)
+    pages: Fundraiser[]
 
 }

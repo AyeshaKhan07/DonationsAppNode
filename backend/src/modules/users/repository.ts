@@ -9,6 +9,10 @@ export default {
         return await userRepository.findOneBy({ email });
     },
 
+    async findById(id: number) {
+        return await userRepository.findOneBy({ id });
+    },
+
     async fetchAll() {
         return await userRepository.find();
     },
