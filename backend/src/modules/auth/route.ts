@@ -1,7 +1,8 @@
 import * as Express from "express";
-import { validateRequest } from "../../middlewares/validate-request";
-import { CreateUserDto, LoginUserDto } from "./dto";
+
 import AuthController from "./controller";
+import { CreateUserDto, LoginUserDto } from "./dto";
+import { validateRequest } from "../../middlewares/validate-request";
 
 class AuthRouter {
     public route = Express.Router();

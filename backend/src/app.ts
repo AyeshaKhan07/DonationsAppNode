@@ -1,11 +1,12 @@
 import * as express from 'express';
 import { establishConnection } from './database';
+import Route from './interfaces/router.interface';
 
 class App {
     public app: express.Application;
     public port: number;
 
-    constructor(routers, middlewares, port: number) {
+    constructor(routers: Route[], middlewares: any[], port: number) {
         this.app = express();
         this.port = port;
 
@@ -14,11 +15,11 @@ class App {
         this.initializeRoutes(routers);
     }
 
-    private initalizeMiddleware(middlewares) {
+    private initalizeMiddleware(middlewares: any[]) {
         this.app.use(middlewares)
     }
 
-    private initializeRoutes(routers) {
+    private initializeRoutes(routers: Route[]) {
         routers.forEach(router => {
             this.app.use('/api', router.route)
         });

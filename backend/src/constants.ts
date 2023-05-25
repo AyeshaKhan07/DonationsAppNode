@@ -1,4 +1,4 @@
-export const JWT_TOKEN = process.env.JWT_KEY
+export const JWT_KEY = process.env.JWT_KEY
 
 export const MIN_LENGTHS = {
     NAME: 2,

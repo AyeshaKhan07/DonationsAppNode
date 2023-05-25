@@ -11,8 +11,9 @@ import * as express from 'express';
 import App from './app';
 import AuthRouter from './modules/auth/route';
 import authMiddleware from './middlewares/authentication';
+import FundraiserRouter from './modules/fundraisers/route';
 
-const routers = [new AuthRouter()]
+const routers = [new AuthRouter(), new FundraiserRouter()]
 const middlewares = [authMiddleware, express.urlencoded({ extended: true }), express.json(),]
 
 const app = new App(routers, middlewares, Number(process.env.APP_PORT));

@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 import { Request, Response, Next } from 'express';
 
-import { JWT_TOKEN } from '../constants';
+import { JWT_KEY } from '../constants';
 import { HTTP_STATUS } from '../shared/http-status-codes';
 
 // Whitelist of routes that do not require authentication
@@ -26,7 +26,7 @@ export default (req: Request, res: Response, next: Next) => {
 
         try {
             const token = authHeader.split(' ')[1];
-            decodedToken = jwt.verify(token, JWT_TOKEN);
+            decodedToken = jwt.verify(token, JWT_KEY);
 
             if (!decodedToken) {
                 res.send({
