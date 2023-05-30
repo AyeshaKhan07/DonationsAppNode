@@ -9,6 +9,8 @@ const whitelist = ['/api/login', '/api/signup'];
 
 export default (req: Request, res: Response, next: Next) => {
 
+    console.log(req.url);
+
     if (whitelist.includes(req.url))
         next();
 
@@ -19,7 +21,9 @@ export default (req: Request, res: Response, next: Next) => {
             res.send({
                 status: HTTP_STATUS.UNAUTHORIZED,
                 message: "No authentication header found."
-            })
+            });
+
+            return;
         }
 
         let decodedToken = null;
@@ -32,14 +36,22 @@ export default (req: Request, res: Response, next: Next) => {
                 res.send({
                     status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
                     message: "Unable to decode jwt"
-                })
+                });
+
+                return;
             }
+
+            next();
+
         } catch (error) {
             console.log(error);
+            
             res.send({
                 status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
                 message: "Internal Server Error"
-            })
+            });
+
+            return;
         }
     }
 }

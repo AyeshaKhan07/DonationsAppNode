@@ -21,7 +21,12 @@ class AuthController {
 
         try {
             const createdUser = await UserRepository.create(user);
-            const accessToken = generateAccessToken(createdUser.email);
+            
+            const jwtSignPayload = {
+                id: createdUser.id,
+                email: createdUser.email
+            };
+            const accessToken = generateAccessToken(jwtSignPayload);
 
             res.send({
                 status: HTTP_STATUS.CREATED,
@@ -47,7 +52,12 @@ class AuthController {
             const passwordMatched = hashPassword == user.password;
 
             if (passwordMatched) {
-                const accessToken = generateAccessToken(user.email);
+                
+                const jwtSignPayload = {
+                    id: user.id,
+                    email: user.email
+                };
+                const accessToken = generateAccessToken(jwtSignPayload);
 
                 res.send({
                     status: HTTP_STATUS.OK,

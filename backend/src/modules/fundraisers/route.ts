@@ -14,7 +14,7 @@ class FundraiserRouter {
 
     public initializeControllers() {
 
-        this.route.post('/create', validateRequest(CreatePageDto), this.fundraiserController.createPage);
+        this.route.post('/fundraiser-pages', validateRequest(CreatePageDto), this.fundraiserController.createPage);
     }
 }
 
