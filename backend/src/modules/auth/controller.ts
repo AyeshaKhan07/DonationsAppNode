@@ -19,65 +19,54 @@ class AuthController {
         user.password = newUser.password
         user.firstName = newUser.firstName
 
-        try {
-            const createdUser = await UserRepository.create(user);
-            
-            const jwtSignPayload = {
-                id: createdUser.id,
-                email: createdUser.email
-            };
-            const accessToken = generateAccessToken(jwtSignPayload);
+        const createdUser = await UserRepository.create(user);
 
-            res.send({
-                status: HTTP_STATUS.CREATED,
-                message: 'User created',
-                accessToken
-            })
-        } catch (error) {
+        const jwtSignPayload = {
+            id: createdUser.id,
+            email: createdUser.email
+        };
+        const accessToken = generateAccessToken(jwtSignPayload);
 
-            res.send({
-                error
-            })
-        }
+        return res.status(HTTP_STATUS.CREATED).send({
+            status: HTTP_STATUS.CREATED,
+            message: 'User created',
+            accessToken
+        })
     }
 
     async loginUser(req: Request, res: Response) {
         const { email, password } = req.body;
 
-        try {
+        const user = await UserRepository.findByEmail(email);
 
-            const user = await UserRepository.findByEmail(email);
-            const hashPassword = await encryptTohashPassword(password);
+        if (!user) return res.status(HTTP_STATUS.UNAUTHORIZED).send({
+            status: HTTP_STATUS.UNAUTHORIZED,
+            message: 'Invalid credentials'
+        })
 
-            const passwordMatched = hashPassword == user.password;
+        const hashPassword = await encryptTohashPassword(password);
 
-            if (passwordMatched) {
-                
-                const jwtSignPayload = {
-                    id: user.id,
-                    email: user.email
-                };
-                const accessToken = generateAccessToken(jwtSignPayload);
+        const passwordMatched = hashPassword == user.password;
 
-                res.send({
-                    status: HTTP_STATUS.OK,
-                    message: 'Login successful!',
-                    accessToken
-                })
-            }
+        if (passwordMatched) {
 
-            else res.send({
-                status: HTTP_STATUS.UNAUTHORIZED,
-                message: 'Invalid credentials'
-            })
+            const jwtSignPayload = {
+                id: user.id,
+                email: user.email
+            };
+            const accessToken = generateAccessToken(jwtSignPayload);
 
-        } catch (error) {
-            console.log(error)
-            res.send({
-                status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
-                message: 'Internal Server Error'
+            return res.send({
+                status: HTTP_STATUS.OK,
+                message: 'Login successful!',
+                accessToken
             })
         }
+
+        else return res.status(HTTP_STATUS.UNAUTHORIZED).send({
+            status: HTTP_STATUS.UNAUTHORIZED,
+            message: 'Invalid credentials'
+        })
     }
 }
 

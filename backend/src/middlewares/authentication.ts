@@ -2,14 +2,16 @@ const jwt = require('jsonwebtoken');
 import { Request, Response, Next } from 'express';
 
 import { JWT_KEY } from '../constants';
+import HttpException from '../utils/http-exception';
 import { HTTP_STATUS } from '../shared/http-status-codes';
+import handleErrorResponse from '../utils/error-response.handler';
 
 // Whitelist of routes that do not require authentication
 const whitelist = ['/api/login', '/api/signup'];
 
 export default (req: Request, res: Response, next: Next) => {
 
-    console.log(req.url);
+    console.log("\nURL:", req.url);
 
     if (whitelist.includes(req.url))
         next();
@@ -18,12 +20,8 @@ export default (req: Request, res: Response, next: Next) => {
         const authHeader = req.get('Authorization')
 
         if (!authHeader) {
-            res.send({
-                status: HTTP_STATUS.UNAUTHORIZED,
-                message: "No authentication header found."
-            });
-
-            return;
+            const exception = new HttpException(HTTP_STATUS.UNAUTHORIZED, "No authentication header found.")
+            return handleErrorResponse(exception, res);
         }
 
         let decodedToken = null;
@@ -33,25 +31,16 @@ export default (req: Request, res: Response, next: Next) => {
             decodedToken = jwt.verify(token, JWT_KEY);
 
             if (!decodedToken) {
-                res.send({
-                    status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
-                    message: "Unable to decode jwt"
-                });
-
-                return;
+                const exception = new HttpException(HTTP_STATUS.INTERNAL_SERVER_ERROR, "Unable to decode jwt")
+                return handleErrorResponse(exception, res);
             }
+            req.user = decodedToken;
 
             next();
 
         } catch (error) {
-            console.log(error);
-            
-            res.send({
-                status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
-                message: "Internal Server Error"
-            });
-
-            return;
+            const exception = new HttpException(HTTP_STATUS.INTERNAL_SERVER_ERROR, error.message)
+            return handleErrorResponse(exception, res);
         }
     }
 }

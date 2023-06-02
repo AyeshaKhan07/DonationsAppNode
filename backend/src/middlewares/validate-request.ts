@@ -1,5 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { validate } from 'class-validator';
+import HttpException from '../utils/http-exception';
+import { HTTP_STATUS } from '../shared/http-status-codes';
+import handleErrorResponse from '../utils/error-response.handler';
 
 // This middleware function validates the incoming request body
 export const validateRequest = (type: any) => {
@@ -11,14 +14,17 @@ export const validateRequest = (type: any) => {
     });
 
     const errors = await validate(objectToValidate);
-    
+
     if (errors.length) {
-        const errorResponse = {}
-        for(const error of errors)
-        {
-            errorResponse[error.property] = Object.values(error.constraints)[0]
-        }
-      return res.status(400).json({ errors: errorResponse });
+      const errorResponse = {}
+
+      for (const error of errors) {
+        errorResponse[error.property] = Object.values(error.constraints)[0]
+      }
+
+      const exception = new HttpException(HTTP_STATUS.BAD_REQUEST, "Required fields are not provided")
+      return handleErrorResponse(exception, res, errorResponse);
+      
     }
     next();
   };

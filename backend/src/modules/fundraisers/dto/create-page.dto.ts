@@ -2,8 +2,6 @@ import {  IsString, IsNotEmpty, MinLength, IsNumber, Min, IsEnum } from 'class-v
 
 import { PageType } from '../fundraiser.entity';
 import { MIN_LENGTHS, MIN_VALUES } from '../../../constants';
-import { UserExists } from '../../../custom-validation-rules/user-exisr.rule';
-import { User } from '../../users/user.entity';
 
 export class CreatePageDto {
 
@@ -25,9 +23,4 @@ export class CreatePageDto {
     @IsNotEmpty()
     @IsString()
     readonly story: string
-
-    @IsNotEmpty()
-    @IsNumber()
-    @UserExists()
-    readonly user: User
 }

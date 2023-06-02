@@ -3,18 +3,27 @@ import * as Express from "express";
 import { CreatePageDto } from "./dto";
 import FundraiserController from "./controller";
 import { validateRequest } from "../../middlewares/validate-request";
+import ControllerWrapper from "../../utils/controller-wrapper";
+import Route from "../../interfaces/router.interface";
 
-class FundraiserRouter {
+class FundraiserRouter implements Route {
     public route = Express.Router();
     private fundraiserController = new FundraiserController();
+    
+    private wrappedCreatePage: Function;
 
     constructor() {
+        this.wrapControllers();
         this.initializeControllers();
     }
 
-    public initializeControllers() {
+    wrapControllers() {
+        this.wrappedCreatePage = new ControllerWrapper(this.fundraiserController.createPage).wrapController();
+    }
 
-        this.route.post('/fundraiser-pages', validateRequest(CreatePageDto), this.fundraiserController.createPage);
+    initializeControllers() {
+        this.route.route('/fundraiser-pages')
+        .post(validateRequest(CreatePageDto), this.wrappedCreatePage);
     }
 }
 
