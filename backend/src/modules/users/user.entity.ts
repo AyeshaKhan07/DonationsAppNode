@@ -2,6 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, BeforeInsert, OneToMany } from 
 
 import { encryptTohashPassword } from "../../utils/crypto"
 import { Fundraiser } from "../fundraisers/fundraiser.entity"
+import { Donation } from "../donations/donations.entity"
 
 @Entity('users')
 export class User {
@@ -45,5 +46,8 @@ export class User {
 
     @OneToMany(() => Fundraiser, fundraiser => fundraiser.user)
     pages: Fundraiser[]
+    
+    @OneToMany(() => Donation, donation => donation.user)
+    donations: Donation[]
 
 }

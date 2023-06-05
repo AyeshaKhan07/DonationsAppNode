@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from "typeorm"
+import { Donation } from "../donations/donations.entity"
 import { User } from "../users/user.entity"
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from "typeorm"
 
 export enum PageType {
     Public = 1,
@@ -37,7 +38,10 @@ export class Fundraiser {
     })
     story: string
 
-    @ManyToOne(() => User, user => user.pages)
-    user: Number
+    @ManyToOne(() => User, user => user.pages, { nullable: false })
+    user: User
+
+    @OneToMany(() => Donation, donation => donation.page)
+    donations: Donation[]
 
 }

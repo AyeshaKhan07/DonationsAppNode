@@ -1,21 +1,24 @@
 import { Request, Response } from 'express';
 
-import { Fundraiser } from "./fundraiser.entity";
+import UserRepository from "../users/repository";
 import FundraiserRepository from './repository';
+import { Fundraiser } from "./fundraiser.entity";
 import { HTTP_STATUS } from '../../shared/http-status-codes';
 
 class FundraiserController {
     async createPage(req: Request, res: Response) {
         const user = req.user;
-        const newPage = req.body;
-        const page = new Fundraiser();
+        const newPagePayload = req.body;
+        const newPage = new Fundraiser();
         const repository = new FundraiserRepository();
 
-        page.name = newPage.name;
-        page.goal = newPage.goal;
-        page.user = user.id;
-        page.story = newPage.story;
-        page.pageType = newPage.pageType;
+        const User = await UserRepository.findById(user.id);
+
+        newPage.name = newPagePayload.name;
+        newPage.goal = newPagePayload.goal;
+        newPage.user = User;
+        newPage.story = newPagePayload.story;
+        newPage.pageType = newPagePayload.pageType;
 
         const createdPage = await repository.create(newPage);
 
