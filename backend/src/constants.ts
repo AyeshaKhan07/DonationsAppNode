@@ -7,5 +7,11 @@ export const MIN_LENGTHS = {
 }
 
 export const MIN_VALUES = {
-    GOAL_AMOUNT: 1000
+    GOAL_AMOUNT: 1000,
+    DONATION_AMOUNT: 100
+}
+
+export const MAX_VALUES = {
+    GOAL_AMOUNT: 9999999999,
+    DONATION_AMOUNT: 9999999999
 }
