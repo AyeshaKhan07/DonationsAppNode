@@ -11,6 +11,12 @@ export enum DonationType {
     Sadaqah = 3,
 }
 
+export enum DonationStatus {
+    Pending = 1,
+    Confirmed = 2,
+    Cancelled = 3,
+}
+
 @Entity('donations')
 export class Donation {
     @PrimaryGeneratedColumn()
@@ -34,6 +40,13 @@ export class Donation {
         default: DonationType.General
     })
     donationType: DonationType
+
+    @Column({
+        type: 'enum',
+        enum: DonationStatus,
+        default: DonationStatus.Pending
+    })
+    status: DonationStatus
 
     @ManyToOne(() => User, user => user.donations, { nullable: false })
     user: User

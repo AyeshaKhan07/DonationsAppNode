@@ -6,11 +6,7 @@ import { City } from "./city.entity";
 class CityRepository {
     private cityRepository = connectionSource.getRepository(City);
 
-    // public async create(page: CreatePageDto) {
-    //     return await this.paymentMethodRepository.save(page)
-    // }
-
-    async findById(id: number) {
+    async findById(id: number): Promise<City> {
         const city = await this.cityRepository.findOneBy({ id });
 
         if (!city)
@@ -19,8 +15,12 @@ class CityRepository {
         return city
     }
 
-    async save(data: any) {
+    async save(data: any): Promise<void> {
         return await this.cityRepository.save(data);
+    }
+
+    async truncate(): Promise<void> {
+        return await this.cityRepository.clear();
     }
 
 }

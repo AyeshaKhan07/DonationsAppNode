@@ -13,6 +13,6 @@ export class City {
     })
     name: string
     
-    @ManyToOne(() => Country, country => country.cities, { nullable: false })
+    @ManyToOne(() => Country, country => country.id, { nullable: false })
     country: Country
 }
