@@ -7,9 +7,7 @@ import { encryptTohashPassword } from '../../utils/crypto';
 import { HTTP_STATUS } from '../../shared/http-status-codes';
 
 class AuthController {
-    protected user = new User();
-
-    async signup(req: Request, res: Response) {
+    static async signup(req: Request, res: Response) {
         const user = new User();
         const newUser = req.body;
 
@@ -34,7 +32,7 @@ class AuthController {
         })
     }
 
-    async loginUser(req: Request, res: Response) {
+    static async loginUser(req: Request, res: Response) {
         const { email, password } = req.body;
 
         const user = await UserRepository.findByEmail(email);

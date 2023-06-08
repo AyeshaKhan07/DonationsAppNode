@@ -1,6 +1,6 @@
 import * as express from 'express';
+import Route from './abstracts/router.abstract';
 import { establishConnection } from './database';
-import Route from './interfaces/router.interface';
 
 class App {
     public app: express.Application;

@@ -35,7 +35,8 @@ export class User {
 
     @Column({
         length: 200,
-        type: 'char'
+        type: 'char',
+        // select: false
     })
     password: string
 

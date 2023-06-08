@@ -11,7 +11,7 @@ export default {
         return await userRepository.findOneBy({ email });
     },
 
-    async findById(id: number, withPassword: Boolean = false) {
+    async findById(id: number, withPassword: Boolean = false): Promise<User> {
         const user = await userRepository.findOneBy({ id });
 
         if (!user)

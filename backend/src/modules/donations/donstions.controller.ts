@@ -5,10 +5,10 @@ import DonationRepository from './donations.repository';
 import { HTTP_STATUS } from '../../shared/http-status-codes';
 
 class DonationController {
-    async createDonation (req: Request, res: Response) {
+    static async createDonation(req: Request, res: Response) {
         const user = req.user;
         const newDonationPayload = req.body;
-        
+
         const newDonation = new Donation();
         const donationRepository = new DonationRepository();
 
@@ -27,6 +27,28 @@ class DonationController {
             status: HTTP_STATUS.CREATED,
             message: 'Donation successfull',
             createdDonation
+        });
+    }
+
+    static async getDonationsByUser(req: Request, res: Response) {
+        const userId = req.user.id;
+        const { page } = req.query;
+
+        const donationRepository = new DonationRepository();
+
+        const donations = await donationRepository.getDonationsByUser(userId, page);
+
+        if (!donations.length)
+            return res.status(HTTP_STATUS.NOT_FOUND).send({
+                status: HTTP_STATUS.NOT_FOUND,
+                message: 'No donations found',
+                donations
+            });
+
+        return res.status(HTTP_STATUS.FOUND).send({
+            status: HTTP_STATUS.FOUND,
+            message: 'Donations found',
+            donations
         });
     }
 }

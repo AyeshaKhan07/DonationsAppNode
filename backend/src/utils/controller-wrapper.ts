@@ -9,7 +9,6 @@ class ControllerWrapper {
 
     constructor(controller: Function) {
         this.controller = controller;
-        this.wrapController();
     }
 
     public wrapController = () => {

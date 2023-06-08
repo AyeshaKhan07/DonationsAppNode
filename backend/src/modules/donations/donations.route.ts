@@ -1,29 +1,24 @@
-import * as Express from "express";
+import { Router } from 'express';
 
-import Route from "../../interfaces/router.interface";
+import Route from "../../abstracts/router.abstract";
 import DonationController from "./donstions.controller";
 import { CreateDonationDto } from "./dto/create-donation.dto";
 import ControllerWrapper from "../../utils/controller-wrapper";
 import { validateRequest } from "../../middlewares/validate-request";
 
-class DonationsRouter implements Route {
-    public route = Express.Router();
-    private donationController = new DonationController();
-    
+class DonationsRouter extends Route {    
     private wrappedCreateDonation: Function;
-
-    constructor() {
-        this.wrapControllers();
-        this.initializeControllers();
-    }
+    private wrappedGetDonationsByUser: Function;
 
     wrapControllers() {
-        this.wrappedCreateDonation = new ControllerWrapper(this.donationController.createDonation).wrapController();
+        this.wrappedCreateDonation = new ControllerWrapper(DonationController.createDonation).wrapController();
+        this.wrappedGetDonationsByUser = new ControllerWrapper(DonationController.getDonationsByUser).wrapController();
     }
 
-    initializeControllers() {
-        this.route.route('/donations')
-        .post(validateRequest(CreateDonationDto), this.wrappedCreateDonation);
+    initializeControllers(route: Router) {
+        route.route('/donations')
+        .post(validateRequest(CreateDonationDto), this.wrappedCreateDonation)
+        .get(this.wrappedGetDonationsByUser)
     }
 }
 

@@ -6,7 +6,7 @@ import { Fundraiser } from "./fundraiser.entity";
 import { HTTP_STATUS } from '../../shared/http-status-codes';
 
 class FundraiserController {
-    async createPage(req: Request, res: Response) {
+    static async createPage(req: Request, res: Response) {
         const user = req.user;
         const newPagePayload = req.body;
         const newPage = new Fundraiser();
