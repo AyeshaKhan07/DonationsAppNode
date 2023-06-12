@@ -2,6 +2,7 @@ import { endConnection, establishConnection } from '../database';
 import { CitySeeder } from './cities.seeder';
 import { CountrySeeder } from './country.seeder';
 import { CurrencySeeder } from './currency.seeder';
+import { PaymentMethodSeeder } from './payment-methods.seeder';
 
 async function seed() {
 
@@ -17,6 +18,7 @@ async function seed() {
   await CurrencySeeder.seed();
   await CountrySeeder.seed();
   await CitySeeder.seed();
+  await PaymentMethodSeeder.seed();
 
   console.log('Seeding completed successfully!\n');
 

@@ -1,8 +1,8 @@
-import { Fundraiser } from "./fundraiser.entity";
-import { connectionSource } from "../../database/data-source";
 import { CreatePageDto } from "./dto";
+import { Fundraiser } from "./fundraiser.entity";
 import HttpException from "../../utils/http-exception";
 import { HTTP_STATUS } from "../../shared/http-status-codes";
+import { connectionSource } from "../../database/data-source";
 
 class FundraiserRepository {
     private fundraiserRepository = connectionSource.getRepository(Fundraiser);
@@ -18,6 +18,10 @@ class FundraiserRepository {
             throw new HttpException(HTTP_STATUS.NOT_FOUND, "Page not found")
 
         return page
+    }
+
+    async getFundraiserById(pageId: number): Promise<Fundraiser> {
+        return await this.fundraiserRepository.findOneBy({ id: pageId })
     }
 
 }

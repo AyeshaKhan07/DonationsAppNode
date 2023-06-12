@@ -38,6 +38,12 @@ export class Fundraiser {
     })
     story: string
 
+    @Column({
+        type: 'int',
+        default: null
+    })
+    totalFundsRaised: number
+
     @ManyToOne(() => User, user => user.pages, { nullable: false })
     user: User
 

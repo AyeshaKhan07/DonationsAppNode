@@ -4,14 +4,16 @@ import {
     ValidatorConstraint,
     ValidatorConstraintInterface,
 } from 'class-validator';
-
 import UserRepository from '../modules/users/repository';
+
 
 @ValidatorConstraint({ async: true })
 export class IsEmailNotExists implements ValidatorConstraintInterface {
 
+    private userRepository = new UserRepository();
+
     async validate(email: string) {
-        const user = await UserRepository.findByEmail(email)
+        const user = await this.userRepository.findByEmail(email)
         return !user;
     }
 

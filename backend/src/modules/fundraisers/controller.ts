@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 
-import UserRepository from "../users/repository";
 import FundraiserRepository from './repository';
 import { Fundraiser } from "./fundraiser.entity";
 import { HTTP_STATUS } from '../../shared/http-status-codes';
@@ -12,11 +11,9 @@ class FundraiserController {
         const newPage = new Fundraiser();
         const repository = new FundraiserRepository();
 
-        const User = await UserRepository.findById(user.id);
-
         newPage.name = newPagePayload.name;
         newPage.goal = newPagePayload.goal;
-        newPage.user = User;
+        newPage.user = user.id;
         newPage.story = newPagePayload.story;
         newPage.pageType = newPagePayload.pageType;
 

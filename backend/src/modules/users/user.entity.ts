@@ -34,6 +34,18 @@ export class User {
     contact: string
 
     @Column({
+        type: 'int',
+        default: null
+    })
+    totalDonations: number
+
+    @Column({
+        type: 'int',
+        default: null
+    })
+    totalDonationsRaised: number
+
+    @Column({
         length: 200,
         type: 'char',
         // select: false

@@ -9,6 +9,8 @@ import { HTTP_STATUS } from '../../shared/http-status-codes';
 class AuthController {
     static async signup(req: Request, res: Response) {
         const user = new User();
+        const userRepository = new UserRepository();
+
         const newUser = req.body;
 
         user.email = newUser.email
@@ -17,7 +19,7 @@ class AuthController {
         user.password = newUser.password
         user.firstName = newUser.firstName
 
-        const createdUser = await UserRepository.create(user);
+        const createdUser = await userRepository.create(user);
 
         const jwtSignPayload = {
             id: createdUser.id,
@@ -33,9 +35,11 @@ class AuthController {
     }
 
     static async loginUser(req: Request, res: Response) {
+        const userRepository = new UserRepository();
+        
         const { email, password } = req.body;
 
-        const user = await UserRepository.findByEmail(email);
+        const user = await userRepository.findByEmail(email, true);
 
         if (!user) return res.status(HTTP_STATUS.UNAUTHORIZED).send({
             status: HTTP_STATUS.UNAUTHORIZED,
@@ -43,7 +47,6 @@ class AuthController {
         })
 
         const hashPassword = await encryptTohashPassword(password);
-
         const passwordMatched = hashPassword == user.password;
 
         if (passwordMatched) {

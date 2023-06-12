@@ -1,5 +1,6 @@
-import { IsNotEmpty, IsNumber, Min, IsEnum, Max } from 'class-validator';
+import { IsNotEmpty, IsNumber, Min, IsEnum, Max, IsOptional } from 'class-validator';
 
+import { User } from '../../users/user.entity';
 import { City } from '../../cities/city.entity';
 import { DonationType } from '../donations.entity';
 import { MAX_VALUES, MIN_VALUES } from '../../../constants';
@@ -36,4 +37,8 @@ export class CreateDonationDto {
     @IsNumber()
     @CityExists()
     readonly city: City
+
+    @IsOptional()
+    @IsNumber()
+    user: User
 }

@@ -8,5 +8,5 @@ export const ormconfig: DataSourceOptions = {
   logging: false,
   entities: ['src/modules/**/*.entity{.ts,.js}'],
   migrations: ['src/migrations/**/*{.ts,.js}'],
-  subscribers: ['src/subscribers/**/*{.ts,.js}'],
+  subscribers: ['src/subscribers/*{.ts,.js}'],
 };
