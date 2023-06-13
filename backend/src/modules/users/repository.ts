@@ -17,13 +17,22 @@ class UserRepository {
         return user
     }
 
-    async findById(id: number, withPassword: Boolean = false): Promise<User> {
+    async findByIdOrFail(id: number, withPassword: Boolean = false): Promise<User> {
         const user = await this.userRepository.findOneBy({ id });
 
         if (!user)
             throw new HttpException(HTTP_STATUS.NOT_FOUND, "User not found")
 
         if (!withPassword)
+            delete user.password
+
+        return user
+    }
+
+    async findById(id: number, withPassword: Boolean = false): Promise<User> {
+        const user = await this.userRepository.findOneBy({ id });
+
+        if (!withPassword && user)
             delete user.password
 
         return user

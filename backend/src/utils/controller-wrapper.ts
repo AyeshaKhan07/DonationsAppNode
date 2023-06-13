@@ -39,6 +39,7 @@ class ControllerWrapper {
                 const errorException = new HttpException(errorStatus, errorMessage);
                 
                 console.log("Error:", error.message);
+                console.log("Error Stack:", error)
                 
                 return handleErrorResponse(errorException, res);
             }

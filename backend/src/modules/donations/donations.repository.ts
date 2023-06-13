@@ -51,10 +51,10 @@ class DonationRepository {
 
         });
     }
-    
+
     /**
      * The function creates the donation, updates total donations amount of user, updates total funds raised of the funsraiser page,
-     * and updates the total funds raised of page owner in database. All these transactions will rollback if any of them fails. 
+     * and updates the total funds raised of page owner in database. All these transactions will rollback if any of them fails.
      * 
      * @param newDonationPayload 
      * @returns createdDonation 
@@ -69,30 +69,49 @@ class DonationRepository {
                 newDonation = await transactionalEntityManager.save(Donation, newDonationPayload);
 
                 let pageOwner: User;
-                const user = await transactionalEntityManager.findOneBy(User, { id: newDonation.user.id });
-                const fundraiserPage = await transactionalEntityManager.findOneBy(Fundraiser, { id: newDonation.page.id });
-                const page = await transactionalEntityManager.findOne(Fundraiser, { relations: { user: true }, where: { id: newDonation.page.id } });
+                
+                /**
+                 * lock: { mode: "pessimistic_write" } this locks the entity column/row, so that only one request is allowed to make
+                 * modification at a time, other requests has to wait for the entity to get unlocked.
+                 */
 
-                if (!user || !page || !fundraiserPage)
+                const user = await transactionalEntityManager.findOne(User, {
+                    where: { id: newDonation.user.id },
+                    lock: { mode: "pessimistic_write" },
+                    select: { id: true, totalDonations: true, totalDonationsRaised: true },
+                });
+
+                const fundraiserPage = await transactionalEntityManager.findOne(Fundraiser,
+                    {
+                        relations: {user: true},
+                        where: {id: newDonation.page.id},
+                        select: {id: true, totalFundsRaised: true },
+                        lock: { mode: "pessimistic_write" },
+                    });
+
+
+                if (!user || !fundraiserPage)
                     throw new HttpException(HTTP_STATUS.NOT_FOUND, 'One of the dependent entity is missing');
 
-                if (user.id !== page.user.id) {
-                    pageOwner = await transactionalEntityManager.findOneBy(User, { id: page.user.id });
-
-                    user.totalDonations += newDonation.amount;
-                    pageOwner.totalDonationsRaised += newDonation.amount;
-
-                    await transactionalEntityManager.save(User, user);
-                    await transactionalEntityManager.save(User, pageOwner);
-                }
-                else {
-                    user.totalDonations += newDonation.amount;
-                    user.totalDonationsRaised += newDonation.amount;
-                    await transactionalEntityManager.save(User, user);
-                }
-
+                user.totalDonations += newDonation.amount;
                 fundraiserPage.totalFundsRaised += newDonation.amount;
 
+                if (user.id !== fundraiserPage.user.id) {
+
+                    pageOwner = await transactionalEntityManager.findOne(User, {
+                        where: { id: fundraiserPage.user.id },
+                        lock: { mode: "pessimistic_write" },
+                        select: { id: true, totalDonations: true, totalDonationsRaised: true },
+                    });
+
+                    pageOwner.totalDonationsRaised += newDonation.amount;
+
+                    await transactionalEntityManager.save(User, pageOwner);
+                }
+
+                else user.totalDonationsRaised += newDonation.amount;
+
+                await transactionalEntityManager.save(User, user);
                 await transactionalEntityManager.save(Fundraiser, fundraiserPage);
 
             })

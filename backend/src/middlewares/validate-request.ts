@@ -23,7 +23,7 @@ export const validateRequest = (type: any) => {
           errorResponse[error.property] = Object.values(error.constraints)[0]
         }
 
-        const exception = new HttpException(HTTP_STATUS.BAD_REQUEST, "Required fields are not provided")
+        const exception = new HttpException(HTTP_STATUS.BAD_REQUEST, "Required fields validation errors")
         return handleErrorResponse(exception, res, errorResponse);
 
       }

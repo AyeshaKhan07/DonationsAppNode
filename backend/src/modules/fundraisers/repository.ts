@@ -7,17 +7,21 @@ import { connectionSource } from "../../database/data-source";
 class FundraiserRepository {
     private fundraiserRepository = connectionSource.getRepository(Fundraiser);
 
-    public async create(page: CreatePageDto) {
+    public async create(page: CreatePageDto): Promise<Fundraiser> {
         return await this.fundraiserRepository.save(page)
     }
 
-    async findById(id: number) {
+    async findByIdOrFail(id: number): Promise<Fundraiser> {
         const page = await this.fundraiserRepository.findOneBy({ id });
 
         if (!page)
             throw new HttpException(HTTP_STATUS.NOT_FOUND, "Page not found")
 
         return page
+    }
+    
+    async findById(id: number): Promise<Fundraiser> {
+        return await this.fundraiserRepository.findOneBy({ id });
     }
 
     async getFundraiserById(pageId: number): Promise<Fundraiser> {

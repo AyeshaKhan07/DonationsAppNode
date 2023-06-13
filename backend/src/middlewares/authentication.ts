@@ -38,7 +38,7 @@ export default async (req: Request, res: Response, next: Next) => {
                 return handleErrorResponse(exception, res);
             }
 
-            await userRepository.findById(decodedToken.id);
+            await userRepository.findByIdOrFail(decodedToken.id);
             
             req.user = decodedToken;
 

@@ -1,10 +1,12 @@
 import { Request, Response } from 'express';
 
 import { Donation } from './donations.entity';
+import UserRepository from '../users/repository';
+import CityRepository from '../cities/city.repository';
 import DonationRepository from './donations.repository';
 import { HTTP_STATUS } from '../../shared/http-status-codes';
-import UserRepository from '../users/repository';
 import FundraiserRepository from '../fundraisers/repository';
+import CountryRepository from '../countries/country.repository';
 
 class DonationController {
     static async makeDonation(req: Request, res: Response) {
@@ -12,14 +14,20 @@ class DonationController {
 
         const newDonation = new Donation();
         const userRepository = new UserRepository();
+        const cityRepository = new CityRepository();
+        const countryRepository = new CountryRepository();
         const donationRepository = new DonationRepository();
         const fundraiserRepository = new FundraiserRepository();
 
-        const user = await userRepository.findById(req.user.id);
-        const fundraiser = await fundraiserRepository.findById(newDonationPayload.page);
+        const user = await userRepository.findByIdOrFail(req.user.id);
+        const country = await cityRepository.getCountryOrFail(newDonationPayload.city);
+        const currency = await countryRepository.getCurrencyOrFail(country.id);
+        const fundraiser = await fundraiserRepository.findByIdOrFail(newDonationPayload.page);
 
         newDonation.user = user;
         newDonation.page = fundraiser;
+        newDonation.country = country;
+        newDonation.currency = currency;
         newDonation.city = newDonationPayload.city;
         newDonation.amount = newDonationPayload.amount;
         newDonation.donationType = newDonationPayload.donationType;
