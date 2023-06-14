@@ -1,6 +1,10 @@
-import { Donation } from "../donations/donations.entity"
-import { User } from "../users/user.entity"
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from "typeorm"
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from "typeorm";
+
+import { User } from "../users/user.entity";
+import { City } from "../cities/city.entity";
+import { Country } from "../countries/country.entity";
+import { Currency } from "../currencies/currency.entity";
+import { Donation } from "../donations/donations.entity";
 
 export enum PageType {
     Public = 1,
@@ -49,5 +53,14 @@ export class Fundraiser {
 
     @OneToMany(() => Donation, donation => donation.page)
     donations: Donation[]
+
+    @ManyToOne(() => City, city => city.id, { nullable: false })
+    city: City
+
+    @ManyToOne(() => Country, country => country.id, { nullable: false })
+    country: Country
+
+    @ManyToOne(() => Currency, currency => currency.id, { nullable: false })
+    currency: Currency
 
 }
