@@ -1,14 +1,12 @@
-import { IsNotEmpty, IsNumber, Min, IsEnum, Max, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsNumber, Min, IsEnum, Max, IsOptional, IsBoolean } from 'class-validator';
 
 import { User } from '../../users/user.entity';
-import { City } from '../../cities/city.entity';
 import { DonationType } from '../donations.entity';
 import { MAX_VALUES, MIN_VALUES } from '../../../constants';
-import { Fundraiser } from '../../fundraisers/fundraiser.entity';
-import { PaymentMethod } from '../../payment-methods/payment-method.entity';
 import { PageExists } from '../../../custom-validation-rules/page-exist.rule';
 import { CityExists } from '../../../custom-validation-rules/city-exist.rule';
 import { PaymentMethodExists } from '../../../custom-validation-rules/payment-method-exist.rule';
+// import { IsTeamMember } from '../../../custom-validation-rules/member-assigned-to-fundraiser';
 
 export class CreateDonationDto {
 
@@ -26,19 +24,45 @@ export class CreateDonationDto {
     @IsNotEmpty()
     @IsNumber()
     @PageExists()
-    readonly page: Fundraiser
+    readonly page: number
 
     @IsNotEmpty()
     @IsNumber()
     @PaymentMethodExists()
-    readonly paymentMethod: PaymentMethod
+    readonly paymentMethod: number
 
     @IsNotEmpty()
     @IsNumber()
     @CityExists()
-    readonly city: City
+    readonly city: number
+
+    @IsOptional()
+    @IsNumber()
+    country: number
+
+    @IsOptional()
+    @IsNumber()
+    currency: number
 
     @IsOptional()
     @IsNumber()
     user: User
+
+    @IsOptional()
+    @IsNumber()
+    // @IsTeamMember('page')
+    readonly donatedTo: number
+
+    @IsOptional()
+    @IsBoolean()
+    readonly anonymousDonation: boolean
+
+    @IsOptional()
+    @IsBoolean()
+    readonly transactionFeeCovered: boolean
+
+    // @IsOptional()
+    // @IsNumber()
+    // @UserExists()
+    // teamMember: User
 }

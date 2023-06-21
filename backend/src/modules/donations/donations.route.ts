@@ -3,16 +3,16 @@ import { Router } from 'express';
 import Route from "../../abstracts/router.abstract";
 import DonationController from "./donations.controller";
 import { CreateDonationDto } from "./dto/create-donation.dto";
-import ControllerWrapper from "../../utils/controller-wrapper";
+import VanillaController from "../../utils/controller-wrapper";
 import { validateRequest } from "../../middlewares/validate-request";
 
 class DonationsRouter extends Route {    
     private wrappedCreateDonation: Function;
     private wrappedGetDonations: Function;
 
-    wrapControllers() {
-        this.wrappedCreateDonation = new ControllerWrapper(DonationController.makeDonation).wrapController();
-        this.wrappedGetDonations = new ControllerWrapper(DonationController.getDonations).wrapController();
+    async wrapControllers() {
+        this.wrappedCreateDonation = VanillaController.wrap(DonationController.makeDonation);
+        this.wrappedGetDonations = VanillaController.wrap(DonationController.getDonations);
     }
 
     initializeControllers(route: Router) {

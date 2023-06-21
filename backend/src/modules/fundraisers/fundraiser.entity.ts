@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, ManyToMany } from "typeorm";
 
 import { User } from "../users/user.entity";
 import { City } from "../cities/city.entity";
@@ -48,8 +48,17 @@ export class Fundraiser {
     })
     totalFundsRaised: number
 
+    @Column({
+        type: 'boolean',
+        default: false
+    })
+    teamPage: boolean
+
     @ManyToOne(() => User, user => user.pages, { nullable: false })
-    user: User
+    pageOwner: User
+
+    @ManyToMany(() => User, user => user.id)
+    teamMembers: User[]
 
     @OneToMany(() => Donation, donation => donation.page)
     donations: Donation[]

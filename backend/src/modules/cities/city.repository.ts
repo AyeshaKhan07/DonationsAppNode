@@ -21,7 +21,7 @@ class CityRepository {
     }
 
     async getCountryOrFail(cityId: number): Promise<Country> {
-        const city = await this.cityRepository.findOne({ where: { id: cityId }, relations: { country: true } });
+        const city = await this.cityRepository.findOne({ where: { id: cityId }, relations: { country: true }, select: {id: true} });
 
         if (!city)
             throw new HttpException(HTTP_STATUS.NOT_FOUND, "City not found")

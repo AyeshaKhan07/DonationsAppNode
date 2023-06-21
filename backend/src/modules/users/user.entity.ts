@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, BeforeInsert, OneToMany } from "typeorm"
+import { Entity, Column, PrimaryGeneratedColumn, BeforeInsert, OneToMany, ManyToMany, JoinTable } from "typeorm"
 
 import { encryptTohashPassword } from "../../utils/crypto"
 import { Fundraiser } from "../fundraisers/fundraiser.entity"
@@ -52,15 +52,17 @@ export class User {
     })
     password: string
 
-    @BeforeInsert()
-    async hashPassword() {
-        this.password = await encryptTohashPassword(this.password);
-    }
-
-    @OneToMany(() => Fundraiser, fundraiser => fundraiser.user)
+    
+    @ManyToMany(() => Fundraiser, fundraiser => fundraiser.teamMembers)
+    @JoinTable()
     pages: Fundraiser[]
     
     @OneToMany(() => Donation, donation => donation.user)
     donations: Donation[]
+    
+    @BeforeInsert()
+    async hashPassword() {
+        this.password = await encryptTohashPassword(this.password);
+    }
 
 }

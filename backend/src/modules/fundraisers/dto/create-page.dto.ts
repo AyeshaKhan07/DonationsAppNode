@@ -1,9 +1,9 @@
-import {  IsString, IsNotEmpty, MinLength, IsNumber, Min, IsEnum } from 'class-validator';
+import {  IsString, IsNotEmpty, MinLength, IsNumber, Min, IsEnum, IsOptional, IsArray } from 'class-validator';
 
 import { PageType } from '../fundraiser.entity';
 import { MIN_LENGTHS, MIN_VALUES } from '../../../constants';
 import { CityExists } from '../../../custom-validation-rules/city-exist.rule';
-import { City } from '../../cities/city.entity';
+import { UserExists } from '../../../custom-validation-rules/user-exist.rule';
 
 export class CreatePageDto {
 
@@ -29,5 +29,14 @@ export class CreatePageDto {
     @IsNotEmpty()
     @IsNumber()
     @CityExists()
-    readonly city: City
+    readonly city: number
+
+    // @IsOptional()
+    // @IsBoolean()
+    // readonly teamPage: boolean
+
+    @IsOptional()
+    @IsArray()
+    @UserExists()
+    readonly teamMembers: number[]
 }

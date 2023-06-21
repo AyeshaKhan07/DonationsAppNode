@@ -52,6 +52,9 @@ export class Donation {
 
     @ManyToOne(() => User, user => user.donations, { nullable: false })
     user: User
+    
+    @ManyToOne(() => User, user => user.id)
+    donatedTo: User
 
     @ManyToOne(() => Fundraiser, fundraiser => fundraiser.donations, { nullable: false })
     page: Fundraiser

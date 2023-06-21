@@ -10,13 +10,16 @@ class PaymentMethodRepository {
     //     return await this.paymentMethodRepository.save(page)
     // }
 
-    async findById(id: number): Promise<PaymentMethod> {
+    async findByIdOrFail(id: number): Promise<PaymentMethod> {
         const paymentMethod = await this.paymentMethodRepository.findOneBy({ id });
 
         if (!paymentMethod)
             throw new HttpException(HTTP_STATUS.NOT_FOUND, "Payment method not found")
 
         return paymentMethod
+    }
+    async findById(id: number): Promise<PaymentMethod> {
+        return await this.paymentMethodRepository.findOneBy({ id });
     }
 
     async save(data: any): Promise<void> {
