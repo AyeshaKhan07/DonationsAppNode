@@ -6,7 +6,7 @@ import { MAX_VALUES, MIN_VALUES } from '../../../constants';
 import { PageExists } from '../../../custom-validation-rules/page-exist.rule';
 import { CityExists } from '../../../custom-validation-rules/city-exist.rule';
 import { PaymentMethodExists } from '../../../custom-validation-rules/payment-method-exist.rule';
-// import { IsTeamMember } from '../../../custom-validation-rules/member-assigned-to-fundraiser';
+import { IsTeamMember } from '../../../custom-validation-rules/member-assigned-to-fundraiser';
 
 export class CreateDonationDto {
 
@@ -50,7 +50,7 @@ export class CreateDonationDto {
 
     @IsOptional()
     @IsNumber()
-    // @IsTeamMember('page')
+    @IsTeamMember('page')
     readonly donatedTo: number
 
     @IsOptional()

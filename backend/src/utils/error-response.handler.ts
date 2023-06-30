@@ -9,6 +9,7 @@ function handleErrorResponse(error: HttpException, response: Response, errors: O
     response.status(status).send({ status, message, errors });
     
     console.log("Error Message:", error.message);
+    console.log("Error Stack:", error);
 }
 
 export default handleErrorResponse;

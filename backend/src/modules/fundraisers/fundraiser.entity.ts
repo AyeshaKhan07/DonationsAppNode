@@ -57,7 +57,7 @@ export class Fundraiser {
     @ManyToOne(() => User, user => user.pages, { nullable: false })
     pageOwner: User
 
-    @ManyToMany(() => User, user => user.id)
+    @ManyToMany(() => User, user => user.pages)
     teamMembers: User[]
 
     @OneToMany(() => Donation, donation => donation.page)

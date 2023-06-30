@@ -62,11 +62,11 @@ class DonationRepository {
      * 
      * @param newDonationPayload (this is request body sent from API) 
      * @param userId (user id retrived from token)
-     * @returns Donation
+     * @returns {Donation}
      */
 
     async getCompiledNewDonationPayload(newDonationPayload: CreateDonationDto, userId: number): Promise<Donation> {
-        
+
         const newDonation = new Donation();
         const userRepository = new UserRepository();
         const cityRepository = new CityRepository();
@@ -102,7 +102,7 @@ class DonationRepository {
      * and updates the total funds raised of page owner in database. All these transactions will rollback if any of them fails.
      * 
      * @param newDonationPayload 
-     * @returns createdDonation 
+     * @returns {Donation} 
      */
 
     async makeDonationSyncedWithUserAndPage(newDonationPayload: Donation): Promise<Donation> {
@@ -112,7 +112,7 @@ class DonationRepository {
         try {
             await connectionSource.transaction(async (transactionalEntityManager) => {
                 newDonation = await transactionalEntityManager.save(Donation, newDonationPayload);
-                
+
                 /**
                  * lock: { mode: "pessimistic_write" } this locks the entity column/row, so that only one request is allowed to make
                  * modification at a time, other requests has to wait for the entity to get unlocked.
@@ -126,9 +126,9 @@ class DonationRepository {
 
                 const fundraiserPage = await transactionalEntityManager.findOne(Fundraiser,
                     {
-                        relations: {pageOwner: true},
-                        where: {id: newDonation.page.id},
-                        select: {id: true, totalFundsRaised: true },
+                        relations: { pageOwner: true },
+                        where: { id: newDonation.page.id },
+                        select: { id: true, totalFundsRaised: true },
                         lock: { mode: "pessimistic_write" },
                     });
 
@@ -148,7 +148,7 @@ class DonationRepository {
                  * totalDonations of user who is donating and totalDonationsRaised of user who is getting the donation
                  */
 
-                if(newDonation.donatedTo.id == user.id)
+                if (newDonation.donatedTo.id == user.id)
                     user.totalDonationsRaised += newDonation.amount;
 
                 else {
