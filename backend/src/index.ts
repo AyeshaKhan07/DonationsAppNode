@@ -4,8 +4,6 @@ dotenv.config()
 
 // Library imports here
 import * as express from 'express';
-// import * as cors from "cors";
-// import * as morgan from "morgan";
 
 // Local imports here
 import App from './app';

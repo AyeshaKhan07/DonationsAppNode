@@ -8,28 +8,15 @@ import { HTTP_STATUS } from '../../shared/http-status-codes';
 
 class AuthController {
     static async signup(req: Request, res: Response) {
-        const user = new User();
+
         const userRepository = new UserRepository();
 
-        const newUser = req.body;
-
-        user.email = newUser.email
-        user.contact = newUser.contact
-        user.lastName = newUser.lastName
-        user.password = newUser.password
-        user.firstName = newUser.firstName
-
-        const createdUser = await userRepository.create(user);
-
-        const jwtSignPayload = {
-            id: createdUser.id,
-            email: createdUser.email
-        };
-        const accessToken = generateAccessToken(jwtSignPayload);
+        const {createdUser, accessToken} = await userRepository.create(req.body);
 
         return res.status(HTTP_STATUS.CREATED).send({
             status: HTTP_STATUS.CREATED,
             message: 'User created',
+            user: createdUser,
             accessToken
         })
     }

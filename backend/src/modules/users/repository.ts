@@ -4,6 +4,7 @@ import { UserSelect } from "../../interfaces";
 import HttpException from "../../utils/http-exception";
 import { HTTP_STATUS } from "../../shared/http-status-codes";
 import { connectionSource } from "../../database/data-source";
+import { generateAccessToken } from "../../utils/jwt";
 
 class UserRepository {
     private userRepository = connectionSource.getRepository(User);
@@ -47,8 +48,24 @@ class UserRepository {
         return await this.userRepository.find();
     }
 
-    async create(user: CreateUserDto) {
-        return await this.userRepository.save(user);
+    async create(userPayload: CreateUserDto): Promise<{ createdUser: User, accessToken: string }> {
+        const newUser = new User();
+
+        newUser.email = userPayload.email
+        newUser.contact = userPayload.contact
+        newUser.lastName = userPayload.lastName
+        newUser.password = userPayload.password
+        newUser.firstName = userPayload.firstName
+
+        const createdUser = await this.userRepository.save(newUser);
+
+        const jwtSignPayload = {
+            id: createdUser.id,
+            email: createdUser.email
+        };
+        const accessToken = generateAccessToken(jwtSignPayload);
+
+        return { createdUser, accessToken }
     }
 
 }
