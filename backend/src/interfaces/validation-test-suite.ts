@@ -4,8 +4,8 @@ interface ExpectedResult {
 }
 
 export interface ValidationTestSuiteInterface {
-    useCase: string,
-    expected: string,
-    payload: Object,
-    expectedResult: ExpectedResult[]
+    describe: string,
+    it: string,
+    data: Object,
+    toHaveProperties: ExpectedResult[]
 }
