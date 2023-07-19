@@ -17,7 +17,7 @@ export class IsMemeberAssigned implements ValidatorConstraintInterface {
         const page = args.object['page'];
 
         /**
-         * We will check two coditions, either the team member is assigned to the page on which the user is making the donation
+         * We will check two conditions, either the team member is assigned to the page on which the user is making the donation
          * or the team member is actually the page owner. If any of these conditions are true, we are good to go, else we show the
          * error message.
          */

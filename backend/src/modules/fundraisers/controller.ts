@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
 
-import FundraiserRepository from './repository';
-import { Fundraiser } from "./fundraiser.entity";
-import { HTTP_STATUS } from '../../shared/http-status-codes';
-import CityRepository from '../cities/city.repository';
-import CountryRepository from '../countries/country.repository';
 import { CreatePageDto } from './dto';
 import { User } from '../users/user.entity';
+import FundraiserRepository from './repository';
 import UserRepository from '../users/repository';
+import { Fundraiser } from "./fundraiser.entity";
+import CityRepository from '../cities/city.repository';
+import { HTTP_STATUS } from '../../shared/http-status-codes';
+import CountryRepository from '../countries/country.repository';
 
 class FundraiserController {
     static async createPage(req: Request, res: Response) {
@@ -35,7 +35,7 @@ class FundraiserController {
         newPage.teamPage = newPagePayload.teamMembers?.length ? true : false;
 
         const teamMembers: User[] = [];
-        
+
         if (newPagePayload.teamMembers) {
 
             for (const userId of newPagePayload.teamMembers) {
@@ -43,7 +43,7 @@ class FundraiserController {
                 teamMembers.push(user);
             }
         }
-        
+
         newPage.teamMembers = teamMembers;
 
         const createdPage = await fundraiserRepository.create(newPage);
@@ -52,6 +52,18 @@ class FundraiserController {
             status: HTTP_STATUS.CREATED,
             message: 'Page created',
             createdPage
+        });
+    }
+
+    static async assignMembers(req: Request, res: Response) {
+        const fundraiserRepository = new FundraiserRepository();
+
+        const { updatedFundraiser, invalidUserIds } = await fundraiserRepository.assignTeamMembers(req.body);
+
+        return res.status(HTTP_STATUS.OK).send({
+            status: HTTP_STATUS.OK,
+            message: 'All the team members are assigned' + invalidUserIds.length ? `except id(s): ${invalidUserIds.join(",")}` : null,
+            fundraiser: updatedFundraiser
         });
     }
 }

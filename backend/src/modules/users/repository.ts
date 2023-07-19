@@ -38,9 +38,6 @@ class UserRepository {
 
         const user = await this.userRepository.findOne({ where: { id }, select: requiredFields, relations: select?.relations });
 
-        if (!withPassword && user)
-            delete user.password
-
         return user
     }
 
