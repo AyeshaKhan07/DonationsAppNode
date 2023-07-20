@@ -1,14 +1,12 @@
 import {  IsNotEmpty, IsNumber, IsArray } from 'class-validator';
 
-import { Fundraiser } from '../fundraiser.entity';
 import { PageExists } from '../../../custom-validation-rules/page-exist.rule';
-import { User } from '../../users/user.entity';
 
 export class AssignTeamMembersDto {
 
     @IsNotEmpty()
     @IsNumber()
-    @PageExists()
+    @PageExists({message: "The page on which your are trying to assign members does not exist"})
     readonly fundraiser: number
 
     @IsNotEmpty()

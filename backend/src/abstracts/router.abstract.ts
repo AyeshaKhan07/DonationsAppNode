@@ -18,7 +18,7 @@ abstract class Route {
     }
 
     abstract wrapControllers(): void
-    abstract initializeControllers(route: Router): void
+    abstract initializeControllers(router: Router): void
 }
 
 export default Route

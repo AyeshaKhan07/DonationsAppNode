@@ -16,9 +16,9 @@ class AuthRouter extends Route {
         this.wrappedLoginUser = VanillaController.wrap(AuthController.loginUser);
     }
 
-    initializeControllers(route: Router) {
-        route.post('/signup', validateRequest(CreateUserDto), this.wrappedSignup);
-        route.post('/login', validateRequest(LoginUserDto), this.wrappedLoginUser);
+    initializeControllers(router: Router) {
+        router.post('/signup', validateRequest(CreateUserDto), this.wrappedSignup);
+        router.post('/login', validateRequest(LoginUserDto), this.wrappedLoginUser);
     }
 }
 

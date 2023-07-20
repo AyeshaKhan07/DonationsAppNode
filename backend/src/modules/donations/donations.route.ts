@@ -15,8 +15,8 @@ class DonationsRouter extends Route {
         this.wrappedGetDonations = VanillaController.wrap(DonationController.getDonations);
     }
 
-    initializeControllers(route: Router) {
-        route.route('/donations')
+    initializeControllers(router: Router) {
+        router.route('/donations')
         .post(validateRequest(CreateDonationDto), this.wrappedCreateDonation)
         .get(this.wrappedGetDonations)
     }

@@ -19,7 +19,7 @@ class FundraiserRouter extends Route {
     initializeControllers(router: Router) {
         const fundraiserPagesRoute = Router();
         
-        router.route('/')
+        fundraiserPagesRoute.route('/')
             .post(validateRequest(CreatePageDto), this.wrappedCreatePage)
             
         fundraiserPagesRoute.post('/assign-members', validateRequest(AssignTeamMembersDto), this.wrappedAssignTeamMember);
