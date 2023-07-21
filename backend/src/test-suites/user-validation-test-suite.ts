@@ -12,7 +12,7 @@ const userValidationTestSuit: ValidationTestSuiteInterface[] = [
         },
 
         toHaveProperties: [
-            { key: "firstName", value: undefined }
+            { key: "firstName" }
         ]
     },
 
@@ -25,14 +25,14 @@ const userValidationTestSuit: ValidationTestSuiteInterface[] = [
             contact: "3647637645"
         },
 
-        toHaveProperties: [{ key: "firstName", value: undefined }, { key: "lastName", value: undefined }]
+        toHaveProperties: [{ key: "firstName" }, { key: "lastName" }]
     },
     {
         describe: "when no value is provided",
         it: "should return errors on all required fields",
         data: {},
 
-        toHaveProperties: [{ key: "firstName", value: undefined }, { key: "lastName", value: undefined }, { key: "email", value: undefined }, { key: "password", value: undefined }, { key: "contact", value: undefined }]
+        toHaveProperties: [{ key: "firstName" }, { key: "lastName" }, { key: "email" }, { key: "password" }, { key: "contact" }]
     },
 
 ]

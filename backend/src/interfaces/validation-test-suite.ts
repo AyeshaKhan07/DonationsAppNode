@@ -1,6 +1,6 @@
 interface ExpectedResult {
     key: string,
-    value: string | undefined
+    value?: string | undefined
 }
 
 export interface ValidationTestSuiteInterface {

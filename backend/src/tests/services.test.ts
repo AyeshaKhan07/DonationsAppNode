@@ -9,7 +9,7 @@ describe('Assign team member service',() => {
             fundraiser: 2,
             members: [0, 0, 0, 0]
         }
-        expect(async () => await fundraiserRepository.assignTeamMembers(payload)).
+        await expect(async () => await fundraiserRepository.assignTeamMembers(payload)).
             rejects.toThrow("All the user IDs in the payload are invalid.");
         });
 
