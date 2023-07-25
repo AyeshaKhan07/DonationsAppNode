@@ -3,16 +3,20 @@ import { HTTP_STATUS } from "../../shared/http-status-codes";
 import { connectionSource } from "../../database/data-source";
 import { City } from "./city.entity";
 import { Country } from "../countries/country.entity";
+import BaseService from "../../abstracts/repository.abstact";
 
-class CityRepository {
-    private cityRepository = connectionSource.getRepository(City);
+class CityService extends BaseService<City> {
 
+    constructor() {
+        super(City)
+    }
+    
     async findById(id: number): Promise<City> {
-        return await this.cityRepository.findOneBy({ id });
+        return await this.repository.findOneBy({ id });
     }
     
     async findByIdOrFail(id: number): Promise<City> {
-        const city = await this.cityRepository.findOneBy({ id });
+        const city = await this.repository.findOneBy({ id });
 
         if (!city)
             throw new HttpException(HTTP_STATUS.NOT_FOUND, "City not found")
@@ -21,7 +25,7 @@ class CityRepository {
     }
 
     async getCountryOrFail(cityId: number): Promise<Country> {
-        const city = await this.cityRepository.findOne({ where: { id: cityId }, relations: { country: true }, select: {id: true} });
+        const city = await this.repository.findOne({ where: { id: cityId }, relations: { country: true }, select: {id: true} });
 
         if (!city)
             throw new HttpException(HTTP_STATUS.NOT_FOUND, "City not found")
@@ -29,14 +33,6 @@ class CityRepository {
         return city.country;
     }
 
-    async save(data: any): Promise<void> {
-        return await this.cityRepository.save(data);
-    }
-
-    async truncate(): Promise<void> {
-        return await this.cityRepository.clear();
-    }
-
 }
 
-export default CityRepository;
+export default CityService;

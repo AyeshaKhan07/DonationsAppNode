@@ -5,15 +5,15 @@ import {
     ValidatorConstraintInterface,
 } from 'class-validator';
 
-import PaymentMethodRepository from '../modules/payment-methods/payments.repository';
+import PaymentMethodService from '../modules/payment-methods/payments.service';
 
 @ValidatorConstraint({ async: true })
 export class IsPaymentMethodExists implements ValidatorConstraintInterface {
 
-    private paymentMethodRepository = new PaymentMethodRepository();
+    private paymentMethodService = new PaymentMethodService();
 
     async validate(id: number) {
-        const paymentMethod = await this.paymentMethodRepository.findById(id)
+        const paymentMethod = await this.paymentMethodService.findById(id)
         return paymentMethod ? true : false;
     }
 

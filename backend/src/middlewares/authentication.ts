@@ -5,7 +5,7 @@ import { JWT_KEY } from '../constants';
 import HttpException from '../utils/http-exception';
 import { HTTP_STATUS } from '../shared/http-status-codes';
 import handleErrorResponse from '../utils/error-response.handler';
-import UserRepository from '../modules/users/repository';
+import UserService from '../modules/users/user.service';
 
 // Whitelist of routes that do not require authentication
 const whitelist = ['/api/login', '/api/signup'];
@@ -28,7 +28,7 @@ export default async (req: Request, res: Response, next: Next) => {
         let decodedToken = null;
 
         try {
-            const userRepository = new UserRepository();
+            const userService = new UserService();
 
             const token = authHeader.split(' ')[1];
             decodedToken = jwt.verify(token, JWT_KEY);
@@ -38,7 +38,7 @@ export default async (req: Request, res: Response, next: Next) => {
                 return handleErrorResponse(exception, res);
             }
 
-            await userRepository.findByIdOrFail(decodedToken.id);
+            await userService.findByIdOrFail(decodedToken.id);
             
             req.user = decodedToken;
 

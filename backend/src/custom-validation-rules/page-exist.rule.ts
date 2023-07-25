@@ -5,15 +5,15 @@ import {
     ValidatorConstraintInterface,
 } from 'class-validator';
 
-import FundraiserRepository from '../modules/fundraisers/repository';
+import FundraiserService from '../modules/fundraisers/fundraiser.service';
 
 @ValidatorConstraint({ async: true })
 export class IsPageExists implements ValidatorConstraintInterface {
 
-    private fundraiserRepository = new FundraiserRepository();
+    private fundraiserService = new FundraiserService();
 
     async validate(id: number) {
-        const page = await this.fundraiserRepository.findById(id)
+        const page = await this.fundraiserService.findById(id)
         return page ? true : false;
     }
 

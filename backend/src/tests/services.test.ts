@@ -1,19 +1,33 @@
 import { AssignTeamMembersDto } from "../modules/fundraisers/dto";
-import FundraiserRepository from "../modules/fundraisers/repository";
+import FundraiserService from "../modules/fundraisers/fundraiser.service";
 
-describe('Assign team member service',() => {
+describe('Assign team member service', () => {
     it('should throw an exception when providing invalid user ids', async () => {
 
-        const fundraiserRepository = new FundraiserRepository();
+        const fundraiserService = new FundraiserService();
+        const fundraisers = await fundraiserService.findAll();
+        const validFundraiserId = fundraisers[0].id;
+
         const payload: AssignTeamMembersDto = {
-            fundraiser: 2,
+            fundraiser: validFundraiserId,
             members: [0, 0, 0, 0]
         }
-        await expect(async () => await fundraiserRepository.assignTeamMembers(payload)).
+        await expect(async () => await fundraiserService.assignTeamMembers(payload)).
             rejects.toThrow("All the user IDs in the payload are invalid.");
-        });
+    });
 
-    // it('should return the correct result when dividing two numbers', () => {
-    //     expect(divide(10, 2)).toBe(5);
-    // });
+    it('should throw an exception when providing empty array of user ids', async () => {
+
+        const fundraiserService = new FundraiserService();
+        const fundraisers = await fundraiserService.findAll();
+        const validFundraiserId = fundraisers[0].id;
+
+        const payload: AssignTeamMembersDto = {
+            fundraiser: validFundraiserId,
+            members: []
+        }
+        await expect(async () => await fundraiserService.assignTeamMembers(payload)).
+            rejects.toThrow("The required array of user IDs in the payload is empty.");
+    });
+
 });

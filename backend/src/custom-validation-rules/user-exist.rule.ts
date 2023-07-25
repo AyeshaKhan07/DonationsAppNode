@@ -6,22 +6,22 @@ import {
     ValidatorConstraintInterface,
 } from 'class-validator';
 
-import UserRepository from '../modules/users/repository';
+import UserService from '../modules/users/user.service';
 
 @ValidatorConstraint({ async: true })
 export class IsUserExists implements ValidatorConstraintInterface {
 
-    private userRepository = new UserRepository();
+    private userService = new UserService();
 
     async validate(ids: number | []) {
         if (typeof ids == 'number') {
-            const user = await this.userRepository.findById(ids)
+            const user = await this.userService.findById(ids)
             return user ? true : false;
         }
 
         else if (Array.isArray(ids)) {
             for (const id of ids) {
-                const user = await this.userRepository.findById(id)
+                const user = await this.userService.findById(id)
                 if (!user) return false
             }
 

@@ -5,15 +5,15 @@ import {
     ValidatorConstraintInterface,
 } from 'class-validator';
 
-import CityRepository from '../modules/cities/city.repository';
+import CityService from '../modules/cities/city.service';
 
 @ValidatorConstraint({ async: true })
 export class IsCityExists implements ValidatorConstraintInterface {
 
-    private cityRepository = new CityRepository();
+    private cityService = new CityService();
 
     async validate(id: number) {
-        const city = await this.cityRepository.findById(id)
+        const city = await this.cityService.findById(id)
         return city ? true : false;
     }
 

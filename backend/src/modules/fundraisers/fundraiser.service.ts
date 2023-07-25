@@ -2,20 +2,27 @@ import { Fundraiser } from "./fundraiser.entity";
 import { FundraiserSelect } from "../../interfaces";
 import HttpException from "../../utils/http-exception";
 import { HTTP_STATUS } from "../../shared/http-status-codes";
-import { connectionSource } from "../../database/data-source";
 import { AssignTeamMembersDto } from "./dto";
 import { User } from "../users/user.entity";
-import UserRepository from "../users/repository";
+import UserService from "../users/user.service";
+import BaseService from "../../abstracts/repository.abstact";
 
-class FundraiserRepository {
-    private fundraiserRepository = connectionSource.getRepository(Fundraiser);
+class FundraiserService extends BaseService<Fundraiser> {
+
+    constructor() {
+        super(Fundraiser)
+    }
+
+    public async findAll(): Promise<Fundraiser[]> {
+        return await this.repository.find();
+    }
 
     public async create(page: Fundraiser): Promise<Fundraiser> {
-        return await this.fundraiserRepository.save(page)
+        return await this.repository.save(page)
     }
 
     async findByIdOrFail(id: number): Promise<Fundraiser> {
-        const page = await this.fundraiserRepository.findOneBy({ id });
+        const page = await this.repository.findOneBy({ id });
 
         if (!page)
             throw new HttpException(HTTP_STATUS.NOT_FOUND, "Page not found")
@@ -31,15 +38,15 @@ class FundraiserRepository {
 
         const requiredRelations = select?.relations ? { ...select.relations } : {}
 
-        return await this.fundraiserRepository.findOne({ where: { id }, select: requiredFields, relations: requiredRelations });
+        return await this.repository.findOne({ where: { id }, select: requiredFields, relations: requiredRelations });
     }
 
     async getFundraiserById(pageId: number): Promise<Fundraiser> {
-        return await this.fundraiserRepository.findOneBy({ id: pageId })
+        return await this.repository.findOneBy({ id: pageId })
     }
 
     async assignTeamMembers(payload: AssignTeamMembersDto): Promise<{ updatedFundraiser: Fundraiser, invalidUserIds: User[]; }> {
-        const userRepository = new UserRepository();
+        const userService = new UserService();
 
         const teamMembers: User[] = [];
         const invalidUserIds = [];
@@ -47,7 +54,7 @@ class FundraiserRepository {
         if (payload.members.length) {
 
             for (const userId of payload.members) {
-                const user = await userRepository.findById(userId);
+                const user = await userService.findById(userId);
                 Boolean(user) ? teamMembers.push(user) : invalidUserIds.push(userId);
             }
         }
@@ -57,7 +64,7 @@ class FundraiserRepository {
         if (invalidUserIds.length == payload.members.length)
             throw new HttpException(HTTP_STATUS.BAD_REQUEST, "All the user IDs in the payload are invalid.");
 
-        await this.fundraiserRepository.update(payload.fundraiser, { teamMembers: teamMembers })
+        await this.repository.update(payload.fundraiser, { teamMembers: teamMembers })
 
         const updatedFundraiser = await this.findById(payload.fundraiser, { values: { name: true }, relations: { teamMembers: true } });
 
@@ -66,4 +73,4 @@ class FundraiserRepository {
 
 }
 
-export default FundraiserRepository;
+export default FundraiserService;

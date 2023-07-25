@@ -6,17 +6,21 @@ import { HTTP_STATUS } from "../../shared/http-status-codes";
 import { connectionSource } from "../../database/data-source";
 import { CreateDonationDto } from "./dto/create-donation.dto";
 import { Fundraiser } from "../fundraisers/fundraiser.entity";
-import UserRepository from "../users/repository";
-import CityRepository from "../cities/city.repository";
-import CountryRepository from "../countries/country.repository";
-import FundraiserRepository from "../fundraisers/repository";
-import PaymentMethodRepository from "../payment-methods/payments.repository";
+import UserService from "../users/user.service";
+import CityService from "../cities/city.service";
+import CountryService from "../countries/country.service";
+import FundraiserService from "../fundraisers/fundraiser.service";
+import PaymentMethodService from "../payment-methods/payments.service";
+import BaseService from "../../abstracts/repository.abstact";
 
-class DonationRepository {
-    private donationRepository = connectionSource.getRepository(Donation);
+class DonationService extends BaseService<Donation> {
+
+    constructor () {
+        super(Donation)
+    }
 
     async findById(id: number): Promise<Donation> {
-        return await this.donationRepository.findOneBy({ id });
+        return await this.repository.findOneBy({ id });
     }
 
     async getDonations(userId: number, page: number = null): Promise<Donation[]> {
@@ -35,7 +39,7 @@ class DonationRepository {
             }
         }
 
-        return await this.donationRepository.find({
+        return await this.repository.find({
             select: {
                 amount: true,
                 donationType: true,
@@ -68,19 +72,19 @@ class DonationRepository {
     async getCompiledNewDonationPayload(newDonationPayload: CreateDonationDto, userId: number): Promise<Donation> {
 
         const newDonation = new Donation();
-        const userRepository = new UserRepository();
-        const cityRepository = new CityRepository();
-        const countryRepository = new CountryRepository();
-        const fundraiserRepository = new FundraiserRepository();
-        const paymentMethodRepository = new PaymentMethodRepository();
+        const userService = new UserService();
+        const cityService = new CityService();
+        const countryService = new CountryService();
+        const fundraiserService = new FundraiserService();
+        const paymentMethodSevice = new PaymentMethodService();
 
-        const user = await userRepository.findByIdOrFail(userId);
-        const city = await cityRepository.findByIdOrFail(newDonationPayload.city);
-        const country = await cityRepository.getCountryOrFail(newDonationPayload.city);
-        const currency = await countryRepository.getCurrencyOrFail(country.id);
-        const donatedTo = await userRepository.findByIdOrFail(newDonationPayload.donatedTo);
-        const fundraiser = await fundraiserRepository.findByIdOrFail(newDonationPayload.page);
-        const paymentMethod = await paymentMethodRepository.findByIdOrFail(newDonationPayload.paymentMethod)
+        const user = await userService.findByIdOrFail(userId);
+        const city = await cityService.findByIdOrFail(newDonationPayload.city);
+        const country = await cityService.getCountryOrFail(newDonationPayload.city);
+        const currency = await countryService.getCurrencyOrFail(country.id);
+        const donatedTo = await userService.findByIdOrFail(newDonationPayload.donatedTo);
+        const fundraiser = await fundraiserService.findByIdOrFail(newDonationPayload.page);
+        const paymentMethod = await paymentMethodSevice.findByIdOrFail(newDonationPayload.paymentMethod)
 
         newDonation.user = user;
         newDonation.city = city;
@@ -178,4 +182,4 @@ class DonationRepository {
 
 }
 
-export default DonationRepository;
+export default DonationService;

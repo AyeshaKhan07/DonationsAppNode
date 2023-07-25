@@ -1,6 +1,6 @@
 
 import paymentMethods from './seeders-data/payment-methods-data';
-import PaymentMethodRepository from '../modules/payment-methods/payments.repository';
+import PaymentMethodService from '../modules/payment-methods/payments.service';
 import { establishConnection } from '../database';
 
 export class PaymentMethodSeeder {
@@ -8,8 +8,8 @@ export class PaymentMethodSeeder {
 
         try {
 
-            const repository = new PaymentMethodRepository();
-            await repository.save(paymentMethods);
+            const service = new PaymentMethodService();
+            await service.save(paymentMethods);
 
         } catch (error) {
             throw error
@@ -17,12 +17,12 @@ export class PaymentMethodSeeder {
 
     }
 
-    public static async clear(): Promise<void> {
+    public static async clear(): Promise<Boolean> {
 
         try {
 
-            const repository = new PaymentMethodRepository();
-            await repository.truncate();
+            const service = new PaymentMethodService();
+            return await service.truncateEntity();
 
         } catch (error) {
             throw error

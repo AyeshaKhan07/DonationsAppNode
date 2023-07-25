@@ -1,4 +1,4 @@
-import CurrencyRepository from '../modules/currencies/currency.repository';
+import CurrencyService from '../modules/currencies/currency.service';
 import currencies from './seeders-data/currencies-data';
 
 export class CurrencySeeder {
@@ -6,8 +6,8 @@ export class CurrencySeeder {
 
     try {
       
-      const repository = new CurrencyRepository();
-      await repository.save(currencies);
+      const service = new CurrencyService();
+      await service.save(currencies);
 
     } catch (error) {
       throw error
@@ -15,12 +15,12 @@ export class CurrencySeeder {
 
   }
 
-  public static async clear(): Promise<void> {
+  public static async clear(): Promise<Boolean> {
 
     try {
       
-      const repository = new CurrencyRepository();
-      await repository.truncate();
+      const service = new CurrencyService();
+      return await service.truncateEntity();
 
     } catch (error) {
       throw error

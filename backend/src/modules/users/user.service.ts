@@ -5,12 +5,15 @@ import HttpException from "../../utils/http-exception";
 import { HTTP_STATUS } from "../../shared/http-status-codes";
 import { connectionSource } from "../../database/data-source";
 import { generateAccessToken } from "../../utils/jwt";
+import BaseService from "../../abstracts/repository.abstact";
 
-class UserRepository {
-    private userRepository = connectionSource.getRepository(User);
+class UserService extends BaseService<User> {
+    constructor() {
+        super(User)
+    }
 
     async findByEmail(email: string, withPassword: Boolean = false) {
-        const user = await this.userRepository.findOneBy({ email });
+        const user = await this.repository.findOneBy({ email });
 
         if (user && !withPassword)
             delete user.password
@@ -19,7 +22,7 @@ class UserRepository {
     }
 
     async findByIdOrFail(id: number, withPassword: Boolean = false): Promise<User> {
-        const user = await this.userRepository.findOneBy({ id });
+        const user = await this.repository.findOneBy({ id });
 
         if (!user)
             throw new HttpException(HTTP_STATUS.NOT_FOUND, "User not found")
@@ -36,13 +39,13 @@ class UserRepository {
             { id: true, ...select.values, password: withPassword } :
             { id: true, password: withPassword };
 
-        const user = await this.userRepository.findOne({ where: { id }, select: requiredFields, relations: select?.relations });
+        const user = await this.repository.findOne({ where: { id }, select: requiredFields, relations: select?.relations });
 
         return user
     }
 
     async fetchAll() {
-        return await this.userRepository.find();
+        return await this.repository.find();
     }
 
     async create(userPayload: CreateUserDto): Promise<{ createdUser: User, accessToken: string }> {
@@ -54,7 +57,7 @@ class UserRepository {
         newUser.password = userPayload.password
         newUser.firstName = userPayload.firstName
 
-        const createdUser = await this.userRepository.save(newUser);
+        const createdUser = await this.repository.save(newUser);
 
         const jwtSignPayload = {
             id: createdUser.id,
@@ -67,4 +70,4 @@ class UserRepository {
 
 }
 
-export default UserRepository;
+export default UserService;

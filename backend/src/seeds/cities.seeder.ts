@@ -1,13 +1,13 @@
 import cities from './seeders-data/cities-data';
-import CityRepository from '../modules/cities/city.repository';
+import CityService from '../modules/cities/city.service';
 
 export class CitySeeder {
   public static async seed(): Promise<void> {
 
     try {
 
-      const repository = new CityRepository();
-      await repository.save(cities);
+      const service = new CityService();
+      await service.save(cities);
 
     } catch (error) {
       throw error
@@ -15,12 +15,12 @@ export class CitySeeder {
 
   }
 
-  public static async clear(): Promise<void> {
+  public static async clear(): Promise<Boolean> {
 
     try {
       
-      const repository = new CityRepository();
-      await repository.truncate();
+      const service = new CityService();
+      return await service.truncateEntity();
 
     } catch (error) {
       throw error
