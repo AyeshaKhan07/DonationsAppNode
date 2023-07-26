@@ -2,10 +2,12 @@ import { Fundraiser } from "./fundraiser.entity";
 import { FundraiserSelect } from "../../interfaces";
 import HttpException from "../../utils/http-exception";
 import { HTTP_STATUS } from "../../shared/http-status-codes";
-import { AssignTeamMembersDto } from "./dto";
+import { AssignTeamMembersDto, CreatePageDto } from "./dto";
 import { User } from "../users/user.entity";
 import UserService from "../users/user.service";
-import BaseService from "../../abstracts/repository.abstact";
+import BaseService from "../../abstracts/service.abstact";
+import CityService from "../cities/city.service";
+import CountryService from "../countries/country.service";
 
 class FundraiserService extends BaseService<Fundraiser> {
 
@@ -17,8 +19,40 @@ class FundraiserService extends BaseService<Fundraiser> {
         return await this.repository.find();
     }
 
-    public async create(page: Fundraiser): Promise<Fundraiser> {
-        return await this.repository.save(page)
+    public async create(newPagePayload: CreatePageDto, userId: number): Promise<Fundraiser> {
+        const newPage = new Fundraiser();
+        const cityService = new CityService();
+        const userService = new UserService();
+        const countryService = new CountryService();
+        // const fundraiserService = new FundraiserService();
+
+        const city = await cityService.findByIdOrFail(newPagePayload.city);
+        const country = await cityService.getCountryOrFail(newPagePayload.city);
+        const currency = await countryService.getCurrencyOrFail(country.id);
+        const user = await userService.findById(userId, false, { values: { firstName: true } });
+
+        newPage.city = city;
+        newPage.country = country;
+        newPage.pageOwner = user;
+        newPage.currency = currency;
+        newPage.name = newPagePayload.name;
+        newPage.goal = newPagePayload.goal;
+        newPage.story = newPagePayload.story;
+        newPage.pageType = newPagePayload.pageType;
+        newPage.teamPage = newPagePayload.teamMembers?.length ? true : false;
+
+        const teamMembers: User[] = [];
+
+        if (newPagePayload.teamMembers) {
+
+            for (const userId of newPagePayload.teamMembers) {
+                const user = await userService.findById(userId);
+                teamMembers.push(user);
+            }
+        }
+
+        newPage.teamMembers = teamMembers;
+        return await this.save(newPage)
     }
 
     async findByIdOrFail(id: number): Promise<Fundraiser> {
@@ -47,6 +81,11 @@ class FundraiserService extends BaseService<Fundraiser> {
 
     async assignTeamMembers(payload: AssignTeamMembersDto): Promise<{ updatedFundraiser: Fundraiser, invalidUserIds: User[]; }> {
         const userService = new UserService();
+
+        const fundraiser = await this.findById(payload.fundraiser, { values: { teamPage: true } });
+
+        if (!fundraiser.teamPage)
+            throw new HttpException(HTTP_STATUS.BAD_REQUEST, "This fundraiser is not a team page");
 
         const teamMembers: User[] = [];
         const invalidUserIds = [];

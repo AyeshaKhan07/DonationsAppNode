@@ -11,7 +11,7 @@ import CityService from "../cities/city.service";
 import CountryService from "../countries/country.service";
 import FundraiserService from "../fundraisers/fundraiser.service";
 import PaymentMethodService from "../payment-methods/payments.service";
-import BaseService from "../../abstracts/repository.abstact";
+import BaseService from "../../abstracts/service.abstact";
 
 class DonationService extends BaseService<Donation> {
 

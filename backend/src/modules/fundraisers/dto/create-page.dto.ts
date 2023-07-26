@@ -1,4 +1,4 @@
-import {  IsString, IsNotEmpty, MinLength, IsNumber, Min, IsEnum, IsOptional, IsArray } from 'class-validator';
+import {  IsString, IsNotEmpty, MinLength, IsNumber, Min, IsEnum, IsOptional, IsArray, IsBoolean } from 'class-validator';
 
 import { PageType } from '../fundraiser.entity';
 import { MIN_LENGTHS, MIN_VALUES } from '../../../constants';
@@ -6,6 +6,10 @@ import { CityExists } from '../../../custom-validation-rules/city-exist.rule';
 import { UserExists } from '../../../custom-validation-rules/user-exist.rule';
 
 export class CreatePageDto {
+
+    @IsOptional()
+    @IsNumber()
+    readonly id?: number
 
     @IsNotEmpty()
     @IsString()
@@ -31,9 +35,9 @@ export class CreatePageDto {
     @CityExists()
     readonly city: number
 
-    // @IsOptional()
-    // @IsBoolean()
-    // readonly teamPage: boolean
+    @IsOptional()
+    @IsNumber()
+    readonly pageOwner?: number
 
     @IsOptional()
     @IsArray()

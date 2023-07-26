@@ -1,25 +1,28 @@
-import cities from './seeders-data/cities-data';
-import CityService from '../modules/cities/city.service';
 import DonationService from '../modules/donations/donations.service';
+import donations from './seeders-data/donations-data';
 
 export class DonationSeeder {
-//   public static async seed(): Promise<void> {
+  public static async seed(): Promise<void> {
 
-//     try {
+    try {
 
-//       const repository = new CityRepository();
-//       await repository.save(cities);
+      const service = new DonationService();
 
-//     } catch (error) {
-//       throw error
-//     }
+      for (const donation of donations) {
+        const newDonationPayload = await service.getCompiledNewDonationPayload(donation, donation.user);
+        await service.makeDonationSyncedWithUserAndPage(newDonationPayload);
+      }
 
-//   }
+    } catch (error) {
+      throw error
+    }
+
+  }
 
   public static async clear(): Promise<Boolean> {
 
     try {
-      
+
       const service = new DonationService();
       const success = await service.truncateEntity();
       return success

@@ -10,6 +10,10 @@ import { IsTeamMember } from '../../../custom-validation-rules/member-assigned-t
 
 export class CreateDonationDto {
 
+    @IsOptional()
+    @IsNumber()
+    readonly id?: number
+
     @IsNotEmpty()
     @IsNumber()
     @Min(MIN_VALUES.DONATION_AMOUNT)
@@ -38,20 +42,12 @@ export class CreateDonationDto {
 
     @IsOptional()
     @IsNumber()
-    country: number
-
-    @IsOptional()
-    @IsNumber()
-    currency: number
-
-    @IsOptional()
-    @IsNumber()
-    user: User
+    user?: number
 
     @IsOptional()
     @IsNumber()
     @IsTeamMember('page')
-    readonly donatedTo: number
+    readonly donatedTo?: number
 
     @IsOptional()
     @IsBoolean()
@@ -60,9 +56,4 @@ export class CreateDonationDto {
     @IsOptional()
     @IsBoolean()
     readonly transactionFeeCovered: boolean
-
-    // @IsOptional()
-    // @IsNumber()
-    // @UserExists()
-    // teamMember: User
 }

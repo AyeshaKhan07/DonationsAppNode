@@ -5,7 +5,7 @@ import HttpException from "../../utils/http-exception";
 import { HTTP_STATUS } from "../../shared/http-status-codes";
 import { connectionSource } from "../../database/data-source";
 import { generateAccessToken } from "../../utils/jwt";
-import BaseService from "../../abstracts/repository.abstact";
+import BaseService from "../../abstracts/service.abstact";
 
 class UserService extends BaseService<User> {
     constructor() {

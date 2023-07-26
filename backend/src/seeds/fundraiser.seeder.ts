@@ -1,18 +1,23 @@
 import FundraiserService from '../modules/fundraisers/fundraiser.service';
+import fundraisers from './seeders-data/fundraisers-data';
 
 export class FundraiserSeeder {
-//   public static async seed(): Promise<void> {
+  public static async seed(): Promise<void> {
 
-//     try {
+    try {
 
-//       const repository = new CityRepository();
-//       await repository.save(cities);
+      const service = new FundraiserService();
 
-//     } catch (error) {
-//       throw error
-//     }
+      for (const fundraiser of fundraisers) {
 
-//   }
+        await service.create(fundraiser, fundraiser.pageOwner);
+      }
+
+    } catch (error) {
+      throw error
+    }
+
+  }
 
   public static async clear(): Promise<Boolean> {
 

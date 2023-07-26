@@ -3,7 +3,7 @@ import { Country } from "./country.entity";
 import { Currency } from "../currencies/currency.entity";
 import HttpException from "../../utils/http-exception";
 import { HTTP_STATUS } from "../../shared/http-status-codes";
-import BaseService from "../../abstracts/repository.abstact";
+import BaseService from "../../abstracts/service.abstact";
 
 class CountryService extends BaseService<Country> {
     constructor() {

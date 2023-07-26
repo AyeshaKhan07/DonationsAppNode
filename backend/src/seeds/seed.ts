@@ -5,6 +5,7 @@ import { CurrencySeeder } from './currency.seeder';
 import { DonationSeeder } from './donations.seeder';
 import { FundraiserSeeder } from './fundraiser.seeder';
 import { PaymentMethodSeeder } from './payment-methods.seeder';
+import { UserSeeder } from './users.seeder';
 
 async function seed() {
 
@@ -14,13 +15,15 @@ async function seed() {
   const donationsTruncated = await DonationSeeder.clear();
   let fundraisersTruncated: Boolean, citiesTruncated: Boolean, countriesTruncated: Boolean, currenciesTruncated: Boolean;
 
-  if(donationsTruncated) fundraisersTruncated = await FundraiserSeeder.clear();
+  if (donationsTruncated) fundraisersTruncated = await FundraiserSeeder.clear();
 
-  if(fundraisersTruncated) citiesTruncated = await CitySeeder.clear();
+  if (donationsTruncated && fundraisersTruncated) await UserSeeder.clear();
 
-  if(citiesTruncated) countriesTruncated = await CountrySeeder.clear();
-  
-  if(currenciesTruncated) currenciesTruncated = await CurrencySeeder.clear();
+  if (fundraisersTruncated) citiesTruncated = await CitySeeder.clear();
+
+  if (citiesTruncated) countriesTruncated = await CountrySeeder.clear();
+
+  if (currenciesTruncated) currenciesTruncated = await CurrencySeeder.clear();
 
   console.info('Seeding Database . . .\n');
 
@@ -28,6 +31,9 @@ async function seed() {
   await CountrySeeder.seed();
   await CitySeeder.seed();
   await PaymentMethodSeeder.seed();
+  await UserSeeder.seed();
+  await FundraiserSeeder.seed();
+  await DonationSeeder.seed();
 
   console.log('Seeding completed successfully!\n');
 

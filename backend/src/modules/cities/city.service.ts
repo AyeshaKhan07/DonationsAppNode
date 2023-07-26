@@ -3,7 +3,7 @@ import { HTTP_STATUS } from "../../shared/http-status-codes";
 import { connectionSource } from "../../database/data-source";
 import { City } from "./city.entity";
 import { Country } from "../countries/country.entity";
-import BaseService from "../../abstracts/repository.abstact";
+import BaseService from "../../abstracts/service.abstact";
 
 class CityService extends BaseService<City> {
 

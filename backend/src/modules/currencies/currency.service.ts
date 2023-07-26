@@ -1,5 +1,5 @@
 
-import BaseService from "../../abstracts/repository.abstact";
+import BaseService from "../../abstracts/service.abstact";
 import { connectionSource } from "../../database/data-source";
 import { Currency } from "./currency.entity";
 

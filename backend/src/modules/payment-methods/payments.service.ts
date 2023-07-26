@@ -2,7 +2,7 @@ import HttpException from "../../utils/http-exception";
 import { PaymentMethod } from "./payment-method.entity";
 import { HTTP_STATUS } from "../../shared/http-status-codes";
 import { connectionSource } from "../../database/data-source";
-import BaseService from "../../abstracts/repository.abstact";
+import BaseService from "../../abstracts/service.abstact";
 
 class PaymentMethodService extends BaseService<PaymentMethod> {
     constructor() {
