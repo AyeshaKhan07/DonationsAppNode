@@ -15,7 +15,7 @@ import BaseService from "../../abstracts/service.abstact";
 
 class DonationService extends BaseService<Donation> {
 
-    constructor () {
+    constructor() {
         super(Donation)
     }
 
@@ -78,13 +78,16 @@ class DonationService extends BaseService<Donation> {
         const fundraiserService = new FundraiserService();
         const paymentMethodSevice = new PaymentMethodService();
 
-        const user = await userService.findByIdOrFail(userId);
-        const city = await cityService.findByIdOrFail(newDonationPayload.city);
-        const country = await cityService.getCountryOrFail(newDonationPayload.city);
+        const [user, city, country, fundraiser, paymentMethod] = await Promise.all([
+            userService.findByIdOrFail(userId),
+            cityService.findByIdOrFail(newDonationPayload.city),
+            cityService.getCountryOrFail(newDonationPayload.city),
+            fundraiserService.findByIdOrFail(newDonationPayload.page),
+            paymentMethodSevice.findByIdOrFail(newDonationPayload.paymentMethod)
+        ])
+
         const currency = await countryService.getCurrencyOrFail(country.id);
-        const donatedTo = await userService.findByIdOrFail(newDonationPayload.donatedTo);
-        const fundraiser = await fundraiserService.findByIdOrFail(newDonationPayload.page);
-        const paymentMethod = await paymentMethodSevice.findByIdOrFail(newDonationPayload.paymentMethod)
+        const donatedTo = newDonationPayload.donatedTo ? await userService.findByIdOrFail(newDonationPayload.donatedTo) : undefined
 
         newDonation.user = user;
         newDonation.city = city;
@@ -152,19 +155,24 @@ class DonationService extends BaseService<Donation> {
                  * totalDonations of user who is donating and totalDonationsRaised of user who is getting the donation
                  */
 
-                if (newDonation.donatedTo.id == user.id)
+                if (newDonation.donatedTo?.id == user.id)
                     user.totalDonationsRaised += newDonation.amount;
 
                 else {
                     const donatedToMember = await transactionalEntityManager.findOne(User, {
-                        where: { id: newDonation.donatedTo.id },
+                        where: { id: newDonation.donatedTo ? newDonation.donatedTo.id : fundraiserPage.pageOwner.id },
                         lock: { mode: "pessimistic_write" },
                         select: { id: true, totalDonations: true, totalDonationsRaised: true },
                     });
 
-                    donatedToMember.totalDonationsRaised += newDonation.amount;
+                    if (donatedToMember.id == user.id)
+                        user.totalDonationsRaised += newDonation.amount;
 
-                    await transactionalEntityManager.save(User, donatedToMember);
+                    else {
+                        donatedToMember.totalDonationsRaised += newDonation.amount;
+
+                        await transactionalEntityManager.save(User, donatedToMember);
+                    }
                 }
 
                 await transactionalEntityManager.save(User, user);

@@ -1,5 +1,6 @@
-import UserService from '../modules/users/user.service';
 import users from './seeders-data/users-data';
+import UserService from '../modules/users/user.service';
+import { connectionSource } from '../database/data-source';
 
 export class UserSeeder {
     public static async seed(): Promise<void> {
@@ -15,12 +16,10 @@ export class UserSeeder {
 
     }
 
-    public static async clear(): Promise<Boolean> {
+    public static async clear() {
 
         try {
-
-            const service = new UserService();
-            return await service.truncateEntity();
+            await connectionSource.manager.query('Delete from users');
 
         } catch (error) {
             throw error

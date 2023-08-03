@@ -11,34 +11,37 @@ async function seed() {
 
   await establishConnection();
 
-  console.info('Truncating Tables . . .\n');
-  const donationsTruncated = await DonationSeeder.clear();
-  let fundraisersTruncated: Boolean, citiesTruncated: Boolean, countriesTruncated: Boolean, currenciesTruncated: Boolean;
+  try {
+    
+    console.info('Truncating Tables . . .\n');
+    
+    await DonationSeeder.clear();
+    await FundraiserSeeder.clear();
+    await UserSeeder.clear();
+    await CitySeeder.clear();
+    await CountrySeeder.clear();
+    await CurrencySeeder.clear();
+    
+    console.log("Truncation successful . . .\n");
 
-  if (donationsTruncated) fundraisersTruncated = await FundraiserSeeder.clear();
+    console.log("Seeding . . .\n");
+    
+    await CurrencySeeder.seed();
+    await CountrySeeder.seed();
+    await CitySeeder.seed();
+    await PaymentMethodSeeder.seed();
+    await UserSeeder.seed();
+    await FundraiserSeeder.seed();
+    await DonationSeeder.seed();
+    
+    console.log("Seeding successful . . .\n");
 
-  if (donationsTruncated && fundraisersTruncated) await UserSeeder.clear();
+    await endConnection();
 
-  if (fundraisersTruncated) citiesTruncated = await CitySeeder.clear();
-
-  if (citiesTruncated) countriesTruncated = await CountrySeeder.clear();
-
-  if (currenciesTruncated) currenciesTruncated = await CurrencySeeder.clear();
-
-  console.info('Seeding Database . . .\n');
-
-  await CurrencySeeder.seed();
-  await CountrySeeder.seed();
-  await CitySeeder.seed();
-  await PaymentMethodSeeder.seed();
-  await UserSeeder.seed();
-  await FundraiserSeeder.seed();
-  await DonationSeeder.seed();
-
-  console.log('Seeding completed successfully!\n');
-
-  await endConnection();
-
+  } catch (error) {
+    console.log(error)
+    await endConnection();
+  }
   return;
 }
 

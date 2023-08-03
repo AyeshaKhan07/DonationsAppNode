@@ -1,5 +1,7 @@
 import DonationService from '../modules/donations/donations.service';
 import donations from './seeders-data/donations-data';
+import { getValidationErrors } from '../middlewares/validate-request';
+import { CreateDonationDto } from '../modules/donations/dto/create-donation.dto';
 
 export class DonationSeeder {
   public static async seed(): Promise<void> {
@@ -9,8 +11,18 @@ export class DonationSeeder {
       const service = new DonationService();
 
       for (const donation of donations) {
-        const newDonationPayload = await service.getCompiledNewDonationPayload(donation, donation.user);
-        await service.makeDonationSyncedWithUserAndPage(newDonationPayload);
+        const errors = await getValidationErrors(donation, CreateDonationDto)
+
+        if (Object.keys(errors).length) {
+          console.log('validation failed on object: \n', donation);
+          console.log('validation failed errors: \n', errors);
+          throw new Error("Validation failed");
+        }
+
+        else {
+          const newDonationPayload = await service.getCompiledNewDonationPayload(donation, donation.user);
+          await service.makeDonationSyncedWithUserAndPage(newDonationPayload);
+        }
       }
 
     } catch (error) {
@@ -19,13 +31,12 @@ export class DonationSeeder {
 
   }
 
-  public static async clear(): Promise<Boolean> {
+  public static async clear() {
 
     try {
 
       const service = new DonationService();
-      const success = await service.truncateEntity();
-      return success
+      await service.truncateEntity();
 
     } catch (error) {
       throw error

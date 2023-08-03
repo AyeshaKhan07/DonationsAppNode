@@ -17,12 +17,12 @@ export class PaymentMethodSeeder {
 
     }
 
-    public static async clear(): Promise<Boolean> {
+    public static async clear() {
 
         try {
 
             const service = new PaymentMethodService();
-            return await service.truncateEntity();
+            await service.truncateEntity();
 
         } catch (error) {
             throw error

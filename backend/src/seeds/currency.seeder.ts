@@ -1,3 +1,4 @@
+import { connectionSource } from '../database/data-source';
 import CurrencyService from '../modules/currencies/currency.service';
 import currencies from './seeders-data/currencies-data';
 
@@ -15,12 +16,11 @@ export class CurrencySeeder {
 
   }
 
-  public static async clear(): Promise<Boolean> {
+  public static async clear() {
 
     try {
       
-      const service = new CurrencyService();
-      return await service.truncateEntity();
+      await connectionSource.manager.query('Delete from currencies');
 
     } catch (error) {
       throw error

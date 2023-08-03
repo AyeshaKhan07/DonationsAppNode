@@ -31,6 +31,9 @@ class FundraiserService extends BaseService<Fundraiser> {
         const currency = await countryService.getCurrencyOrFail(country.id);
         const user = await userService.findById(userId, false, { values: { firstName: true } });
 
+        if(newPagePayload.id)
+            newPage.id = newPagePayload.id
+
         newPage.city = city;
         newPage.country = country;
         newPage.pageOwner = user;
@@ -55,8 +58,8 @@ class FundraiserService extends BaseService<Fundraiser> {
         return await this.save(newPage)
     }
 
-    async findByIdOrFail(id: number): Promise<Fundraiser> {
-        const page = await this.repository.findOneBy({ id });
+    async findByIdOrFail(id: number, select: FundraiserSelect = null): Promise<Fundraiser> {
+        const page = await this.getFundraiserById(id, select);
 
         if (!page)
             throw new HttpException(HTTP_STATUS.NOT_FOUND, "Page not found")
@@ -65,18 +68,16 @@ class FundraiserService extends BaseService<Fundraiser> {
     }
 
     async findById(id: number, select: FundraiserSelect = null): Promise<Fundraiser> {
+        return await this.getFundraiserById(id, select);
+    }
 
+    async getFundraiserById(id: number, select: FundraiserSelect = null): Promise<Fundraiser> {
         const requiredFields = select?.values ?
             { id: true, ...select.values } :
             { id: true, name: true, goal: true, totalFundsRaised: true };
 
         const requiredRelations = select?.relations ? { ...select.relations } : {}
-
         return await this.repository.findOne({ where: { id }, select: requiredFields, relations: requiredRelations });
-    }
-
-    async getFundraiserById(pageId: number): Promise<Fundraiser> {
-        return await this.repository.findOneBy({ id: pageId })
     }
 
     async assignTeamMembers(payload: AssignTeamMembersDto): Promise<{ updatedFundraiser: Fundraiser, invalidUserIds: User[]; }> {

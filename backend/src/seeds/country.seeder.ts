@@ -1,5 +1,6 @@
 import countries from './seeders-data/countries-data';
 import CountryService from '../modules/countries/country.service';
+import { connectionSource } from '../database/data-source';
 
 export class CountrySeeder {
   public static async seed(): Promise<void> {
@@ -15,12 +16,11 @@ export class CountrySeeder {
 
   }
 
-  public static async clear(): Promise<Boolean> {
+  public static async clear() {
 
     try {
       
-      const service = new CountryService();
-      return await service.truncateEntity();
+      await connectionSource.manager.query('Delete from countries');
 
     } catch (error) {
       throw error

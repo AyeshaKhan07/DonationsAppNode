@@ -9,11 +9,14 @@ abstract class BaseService<Entity> {
         return await this.repository.save(data);
     }
 
-    async truncateEntity(): Promise<Boolean> {
-        await this.repository.clear();
-        const recordsExist = this.repository.find();
+    async truncateEntity() {
+        return await this.repository.clear();
+        // const recordsExist = await this.repository.find();
 
-        return !recordsExist
+        // if(recordsExist.length)
+        //     throw new Error("Truncating not successful")
+
+        // else return true
     }
 }
 
