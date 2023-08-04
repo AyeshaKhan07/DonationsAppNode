@@ -1,11 +1,11 @@
 import { User } from "./user.entity";
 import { CreateUserDto } from "../auth/dto";
 import { UserSelect } from "../../interfaces";
-import HttpException from "../../utils/http-exception";
-import { HTTP_STATUS } from "../../shared/http-status-codes";
-import { connectionSource } from "../../database/data-source";
 import { generateAccessToken } from "../../utils/jwt";
+import HttpException from "../../utils/http-exception";
 import BaseService from "../../abstracts/service.abstact";
+import { HTTP_STATUS } from "../../shared/http-status-codes";
+import { ERROR_MESSAGES } from "../../utils/validation-messages";
 
 class UserService extends BaseService<User> {
     constructor() {
@@ -25,7 +25,7 @@ class UserService extends BaseService<User> {
         const user = await this.repository.findOneBy({ id });
 
         if (!user)
-            throw new HttpException(HTTP_STATUS.NOT_FOUND, "User not found")
+            throw new HttpException(HTTP_STATUS.NOT_FOUND, ERROR_MESSAGES.USER_NOT_FOUND)
 
         if (!withPassword)
             delete user.password

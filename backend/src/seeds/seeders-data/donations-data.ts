@@ -1,5 +1,10 @@
 import { CreateDonationDto } from "../../modules/donations/dto/create-donation.dto";
 
+/**
+ * Caution: Don't change the data below, testcases depend on the following data. New data can be added,
+ * mutating or removing existing data is restricted
+ */
+
 const donations: CreateDonationDto[] = [
     {
         id: 1,

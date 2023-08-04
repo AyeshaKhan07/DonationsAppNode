@@ -8,6 +8,8 @@ import UserService from "../users/user.service";
 import BaseService from "../../abstracts/service.abstact";
 import CityService from "../cities/city.service";
 import CountryService from "../countries/country.service";
+import fundraisers from "../../seeds/seeders-data/fundraisers-data";
+import { ERROR_MESSAGES } from "../../utils/validation-messages";
 
 class FundraiserService extends BaseService<Fundraiser> {
 
@@ -29,14 +31,14 @@ class FundraiserService extends BaseService<Fundraiser> {
         const city = await cityService.findByIdOrFail(newPagePayload.city);
         const country = await cityService.getCountryOrFail(newPagePayload.city);
         const currency = await countryService.getCurrencyOrFail(country.id);
-        const user = await userService.findById(userId, false, { values: { firstName: true } });
+        const pageOwner = await userService.findById(userId, false, { values: { firstName: true } });
 
-        if(newPagePayload.id)
+        if (newPagePayload.id)
             newPage.id = newPagePayload.id
 
         newPage.city = city;
         newPage.country = country;
-        newPage.pageOwner = user;
+        newPage.pageOwner = pageOwner;
         newPage.currency = currency;
         newPage.name = newPagePayload.name;
         newPage.goal = newPagePayload.goal;
@@ -50,7 +52,9 @@ class FundraiserService extends BaseService<Fundraiser> {
 
             for (const userId of newPagePayload.teamMembers) {
                 const user = await userService.findById(userId);
-                teamMembers.push(user);
+                
+                if (user && user.id !== pageOwner.id)
+                    teamMembers.push(user);
             }
         }
 
@@ -62,7 +66,7 @@ class FundraiserService extends BaseService<Fundraiser> {
         const page = await this.getFundraiserById(id, select);
 
         if (!page)
-            throw new HttpException(HTTP_STATUS.NOT_FOUND, "Page not found")
+            throw new HttpException(HTTP_STATUS.NOT_FOUND, ERROR_MESSAGES.PAGE_NOT_FOUND)
 
         return page
     }
@@ -81,34 +85,57 @@ class FundraiserService extends BaseService<Fundraiser> {
     }
 
     async assignTeamMembers(payload: AssignTeamMembersDto): Promise<{ updatedFundraiser: Fundraiser, invalidUserIds: User[]; }> {
+        const invalidUserIds = [];
+        const teamMembers: User[] = [];
         const userService = new UserService();
 
-        const fundraiser = await this.findById(payload.fundraiser, { values: { teamPage: true } });
+        const fundraiser = await this.findById(payload.fundraiser, { values: { teamPage: true }, relations: { pageOwner: true, teamMembers: true } });
 
         if (!fundraiser.teamPage)
-            throw new HttpException(HTTP_STATUS.BAD_REQUEST, "This fundraiser is not a team page");
-
-        const teamMembers: User[] = [];
-        const invalidUserIds = [];
+            throw new HttpException(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.FUNDRAISER_NOT_TEAM_PAGE);
 
         if (payload.members.length) {
 
             for (const userId of payload.members) {
                 const user = await userService.findById(userId);
-                Boolean(user) ? teamMembers.push(user) : invalidUserIds.push(userId);
+
+                if (!user)
+                    invalidUserIds.push(userId);
+
+                else if (user.id !== fundraiser.pageOwner.id && !teamMembers.find(member => member.id == user.id) && !fundraiser.teamMembers.find(member => member.id == user.id))
+                    teamMembers.push(user)
             }
+
+            if (invalidUserIds.length == payload.members.length)
+                throw new HttpException(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.PAYLOAD_INVALID_USER_IDS_ARRAY);
         }
 
-        else throw new HttpException(HTTP_STATUS.BAD_REQUEST, "The required array of user IDs in the payload is empty.")
+        else throw new HttpException(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.PAYLOAD_EMPTY_USER_IDS_ARRAY)
 
-        if (invalidUserIds.length == payload.members.length)
-            throw new HttpException(HTTP_STATUS.BAD_REQUEST, "All the user IDs in the payload are invalid.");
+        fundraiser.teamMembers = [...teamMembers, ...fundraiser.teamMembers];
 
-        await this.repository.update(payload.fundraiser, { teamMembers: teamMembers })
+        await this.repository.save(fundraiser);
 
         const updatedFundraiser = await this.findById(payload.fundraiser, { values: { name: true }, relations: { teamMembers: true } });
 
         return { updatedFundraiser, invalidUserIds }
+    }
+
+    getUserAndTeamPageFromSeeder(): { seederTeamPage: CreatePageDto, seederUserPage: CreatePageDto } {
+        let seederTeamPage: CreatePageDto, seederUserPage: CreatePageDto;
+
+        for (const page of fundraisers) {
+            if (seederTeamPage && seederUserPage)
+                break;
+
+            else if (page.teamMembers.length > 0)
+                seederTeamPage = page;
+
+            else seederUserPage = page
+        };
+
+        return { seederTeamPage, seederUserPage }
+
     }
 
 }
