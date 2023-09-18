@@ -8,7 +8,7 @@ class DonationController {
     static async makeDonation(req: Request, res: Response) {
         const donationService = new DonationService();
 
-        const newDonationPayload: Donation = await donationService.getCompiledNewDonationPayload(req.body, req.user.id);
+        const newDonationPayload: Donation = await donationService.getCompiledNewDonationPayload(req.body, req["user"].id);
         const createdDonation = await donationService.makeDonationSyncedWithUserAndPage(newDonationPayload);
 
         return res.status(HTTP_STATUS.CREATED).send({
@@ -19,12 +19,12 @@ class DonationController {
     }
 
     static async getDonations(req: Request, res: Response) {
-        const userId = req.user.id;
+        const userId = req["user"].id;
         const { page } = req.query;
 
         const donationService = new DonationService();
 
-        const donations = await donationService.getDonations(userId, page);
+        const donations = await donationService.getDonations(userId, Number(page));
 
         if (!donations.length)
             return res.status(HTTP_STATUS.NOT_FOUND).send({

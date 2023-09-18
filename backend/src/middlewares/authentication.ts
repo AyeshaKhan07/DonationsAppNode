@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-import { Request, Response, Next } from 'express';
+import { Request, Response, NextFunction } from 'express';
 
 import { JWT_KEY } from '../constants';
 import HttpException from '../utils/http-exception';
@@ -10,7 +10,7 @@ import UserService from '../modules/users/user.service';
 // Whitelist of routes that do not require authentication
 const whitelist = ['/api/login', '/api/signup'];
 
-export default async (req: Request, res: Response, next: Next) => {
+export default async (req: Request, res: Response, next: NextFunction) => {
 
     console.log("\nURL:", req.url);
 
@@ -40,7 +40,7 @@ export default async (req: Request, res: Response, next: Next) => {
 
             await userService.findByIdOrFail(decodedToken.id);
             
-            req.user = decodedToken;
+            req["user"] = decodedToken;
 
             next();
 

@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { RequestHandler, Router } from 'express';
 
 import Route from "../../abstracts/router.abstract";
 import DonationController from "./donations.controller";
@@ -7,8 +7,8 @@ import VanillaController from "../../utils/controller-wrapper";
 import { validateRequest } from "../../middlewares/validate-request";
 
 class DonationsRouter extends Route {    
-    private wrappedCreateDonation: Function;
-    private wrappedGetDonations: Function;
+    private wrappedCreateDonation: RequestHandler;
+    private wrappedGetDonations: RequestHandler;
 
     async wrapControllers() {
         this.wrappedCreateDonation = VanillaController.wrap(DonationController.makeDonation);

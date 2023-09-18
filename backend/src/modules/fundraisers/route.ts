@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, RequestHandler } from 'express';
 
 import { AssignTeamMembersDto, CreatePageDto } from "./dto";
 import FundraiserController from "./controller";
@@ -8,8 +8,8 @@ import { validateRequest } from "../../middlewares/validate-request";
 
 class FundraiserRouter extends Route {
 
-    private wrappedCreatePage: Function;
-    private wrappedAssignTeamMember: Function;
+    private wrappedCreatePage: RequestHandler;
+    private wrappedAssignTeamMember: RequestHandler;
 
     wrapControllers() {
         this.wrappedCreatePage = VanillaController.wrap(FundraiserController.createPage);

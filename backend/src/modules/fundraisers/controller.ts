@@ -7,7 +7,7 @@ class FundraiserController {
     static async createPage(req: Request, res: Response) {
         const fundraiserService = new FundraiserService();
 
-        const createdPage = await fundraiserService.create(req.body, req.user.id);
+        const createdPage = await fundraiserService.create(req.body, req["user"].id);
 
         return res.status(HTTP_STATUS.CREATED).send({
             status: HTTP_STATUS.CREATED,

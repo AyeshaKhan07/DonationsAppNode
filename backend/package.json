@@ -2,7 +2,7 @@
   "name": "donations-app-backend",
   "version": "1.0.0",
   "description": "Creating web app for donations to learn the core functionalities of node js.",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "dev": "nodemon --watch '*.ts' --exec 'ts-node' src/index.ts",
     "compile": "tsc",
@@ -26,6 +26,7 @@
     "typeorm": "^0.3.15"
   },
   "devDependencies": {
+    "@types/express": "^4.17.17",
     "@types/jest": "^29.5.2",
     "@types/node": "^18.16.3",
     "jest": "^29.6.0",

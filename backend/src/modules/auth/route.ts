@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { RequestHandler, Router } from 'express';
 
 import AuthController from "./controller";
 import { CreateUserDto, LoginUserDto } from "./dto";
@@ -8,8 +8,8 @@ import { validateRequest } from "../../middlewares/validate-request";
 
 class AuthRouter extends Route {
 
-    private wrappedSignup: Function;
-    private wrappedLoginUser: Function;
+    private wrappedSignup: RequestHandler;
+    private wrappedLoginUser: RequestHandler;
 
     wrapControllers() {
         this.wrappedSignup = VanillaController.wrap(AuthController.signup);
