@@ -8,27 +8,16 @@ import handleErrorResponse from '../utils/error-response.handler';
 export const validateRequest = (type: any) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // const objectToValidate = new type();
-
-      // Object.keys(req.body).forEach((key) => {
-      //   objectToValidate[key] = req.body[key];
-      // });
-      // console.log("objectToValidate", objectToValidate)
-      // console.log("req.body", req.body)
 
       const errors = await getValidationErrors(req.body, type);
 
       if (Object.keys(errors).length) {
-        // const errorResponse = {}
-
-        // for (const error of errors) {
-        //   errorResponse[error.property] = Object.values(error.constraints)[0]
-        // }
 
         const exception = new HttpException(HTTP_STATUS.BAD_REQUEST, "Required fields validation errors")
         return handleErrorResponse(exception, res, errors);
 
       }
+      
       next();
     } catch (error) {
       const status = error.status || HTTP_STATUS.INTERNAL_SERVER_ERROR;

@@ -1,9 +1,13 @@
-import { IsEmail, IsString, IsNotEmpty, MinLength } from 'class-validator';
+import { IsEmail, IsString, IsNotEmpty, MinLength, IsOptional, IsNumber } from 'class-validator';
 
 import { EmailNotExists } from '../../../custom-validation-rules/email-not-exist.rule';
 import { MIN_LENGTHS } from '../../../constants';
 
 export class CreateUserDto {
+    
+    @IsOptional()
+    @IsNumber()
+    readonly id?: number
 
     @IsNotEmpty()
     @IsString()

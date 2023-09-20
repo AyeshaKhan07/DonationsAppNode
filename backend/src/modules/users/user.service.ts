@@ -6,6 +6,7 @@ import HttpException from "../../utils/http-exception";
 import BaseService from "../../abstracts/service.abstact";
 import { HTTP_STATUS } from "../../shared/http-status-codes";
 import { ERROR_MESSAGES } from "../../utils/validation-messages";
+import { encryptTohashPassword } from "../../utils/crypto";
 
 class UserService extends BaseService<User> {
     constructor() {
@@ -51,10 +52,12 @@ class UserService extends BaseService<User> {
     async create(userPayload: CreateUserDto): Promise<{ createdUser: User, accessToken: string }> {
         const newUser = new User();
 
+        if(userPayload.id) newUser.id = userPayload.id
+        
         newUser.email = userPayload.email
         newUser.contact = userPayload.contact
         newUser.lastName = userPayload.lastName
-        newUser.password = userPayload.password
+        newUser.password = await encryptTohashPassword(userPayload.password)
         newUser.firstName = userPayload.firstName
 
         const createdUser = await this.repository.save(newUser);
