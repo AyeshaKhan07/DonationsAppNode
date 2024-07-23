@@ -1,7 +1,5 @@
-import { FormEventHandler } from "react";
-
 export interface SignInProps {
-    handleSubmit: FormEventHandler
+    handleSignin: Function
     setAlreadyRegistered: Function
 }
 

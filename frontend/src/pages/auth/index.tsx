@@ -9,6 +9,8 @@ import Copyright from '../../components/copyright.component';
 import authImage from '../../assets/katt-yukawa-K0E6E0a0R3A-unsplash.jpg'
 import { ISignInPayload } from '../../types/auth/sign-in.types';
 import AuthApis from '../../apis/auth.apis';
+import { WEB_URLS } from '../../constants';
+import { ISignUpPayload } from '../../types/auth/sign-up.types';
 
 export default function SignIn() {
     const navigate = useNavigate();
@@ -16,7 +18,12 @@ export default function SignIn() {
 
     const handleSignin = async (payload: ISignInPayload) => {
         await AuthApis.signIn(payload)
-        navigate("/home")
+        navigate(WEB_URLS.HOME)
+    };
+
+    const handleSignup = async (payload: ISignUpPayload) => {
+        await AuthApis.signUp(payload)
+        navigate(WEB_URLS.HOME)
     };
 
 
@@ -36,7 +43,7 @@ export default function SignIn() {
                 }}
             />
             <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-                {alreadyRegistered ? <SignInForm handleSignin={handleSignin} setAlreadyRegistered={setAlreadyRegistered} /> : <SignUpForm handleSubmit={handleSignin} setAlreadyRegistered={setAlreadyRegistered} />}
+                {alreadyRegistered ? <SignInForm handleSignin={handleSignin} setAlreadyRegistered={setAlreadyRegistered} /> : <SignUpForm handleSignup={handleSignup} setAlreadyRegistered={setAlreadyRegistered} />}
 
                 <Copyright sx={{ mt: 5 }} />
             </Grid>

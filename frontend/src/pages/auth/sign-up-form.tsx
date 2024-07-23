@@ -1,18 +1,31 @@
-import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Grid from '@mui/material/Grid';
+import Link from '@mui/material/Link';
+import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { SignUpProps } from '../../types/auth/sign-up.types';
+import { ISignUpPayload, SignUpProps } from '../../types/auth/sign-up.types';
+import PasswordInput from '../../components/password-textfield.component';
 
-export default function SignUpForm({ handleSubmit, setAlreadyRegistered }: SignUpProps) {
+export default function SignUpForm({ handleSignup, setAlreadyRegistered }: SignUpProps) {
+
+    const submitForm = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        const data = new FormData(event.currentTarget);
+        const signupPayload: ISignUpPayload = {
+            firstName: String(data.get("firstName")),
+            lastName: String(data.get("lastName")),
+            email: String(data.get("email")),
+            contact: String(data.get("contact")),
+            password: String(data.get("password")),
+        }
+        await handleSignup(signupPayload)
+    };
+
     return <Box
         sx={{
             my: 8,
@@ -28,9 +41,9 @@ export default function SignUpForm({ handleSubmit, setAlreadyRegistered }: SignU
         <Typography component="h1" variant="h5">
             Sign up
         </Typography>
-        <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+        <Box component="form" noValidate onSubmit={submitForm} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={6}>
                     <TextField
                         autoComplete="given-name"
                         name="firstName"
@@ -41,7 +54,7 @@ export default function SignUpForm({ handleSubmit, setAlreadyRegistered }: SignU
                         autoFocus
                     />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={6}>
                     <TextField
                         required
                         fullWidth
@@ -65,12 +78,48 @@ export default function SignUpForm({ handleSubmit, setAlreadyRegistered }: SignU
                     <TextField
                         required
                         fullWidth
+                        id="contact"
+                        label="Contact"
+                        name="contact"
+                        autoComplete="contact"
+                    />
+                </Grid>
+                <Grid item xs={6}>
+                    <PasswordInput
+                        id="password"
+                        name="password"
+                        label="Password"
+                        autoComplete="new-password"
+                        fullWidth
+                        required
+                    />
+                    {/* <TextField
+                        required
+                        fullWidth
                         name="password"
                         label="Password"
                         type="password"
                         id="password"
                         autoComplete="new-password"
+                    /> */}
+                </Grid>
+                <Grid item xs={6}>
+                    <PasswordInput
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        label="Confirm Password"
+                        autoComplete="new-password"
+                        fullWidth
+                        required
                     />
+                    {/* <TextField
+                        required
+                        fullWidth
+                        name="confirmPassword"
+                        label="Confirm Password"
+                        type="password"
+                        id="confirmPassword"
+                    /> */}
                 </Grid>
                 <Grid item xs={12}>
                     <FormControlLabel

@@ -17,6 +17,7 @@
   "author": "Ayesha Khan",
   "license": "ISC",
   "dependencies": {
+    "@mui/icons-material": "^5.16.4",
     "class-validator": "^0.14.0",
     "cors": "^2.8.5",
     "crypto-js": "^4.1.1",
