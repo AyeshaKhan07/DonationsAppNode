@@ -1,22 +1,22 @@
 import * as React from 'react';
-
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
+import { useNavigate } from "react-router-dom";
+
 import SignInForm from './sign-in-form';
 import SignUpForm from './sign-up-form';
 import Copyright from '../../components/copyright.component';
 import authImage from '../../assets/katt-yukawa-K0E6E0a0R3A-unsplash.jpg'
+import { ISignInPayload } from '../../types/auth/sign-in.types';
+import AuthApis from '../../apis/auth.apis';
 
 export default function SignIn() {
+    const navigate = useNavigate();
     const [alreadyRegistered, setAlreadyRegistered] = React.useState(true);
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-        });
+    const handleSignin = async (payload: ISignInPayload) => {
+        await AuthApis.signIn(payload)
+        navigate("/home")
     };
 
 
@@ -36,7 +36,7 @@ export default function SignIn() {
                 }}
             />
             <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-                {alreadyRegistered ? <SignInForm handleSubmit={handleSubmit} setAlreadyRegistered={setAlreadyRegistered} /> : <SignUpForm handleSubmit={handleSubmit} setAlreadyRegistered={setAlreadyRegistered} />}
+                {alreadyRegistered ? <SignInForm handleSignin={handleSignin} setAlreadyRegistered={setAlreadyRegistered} /> : <SignUpForm handleSubmit={handleSignin} setAlreadyRegistered={setAlreadyRegistered} />}
 
                 <Copyright sx={{ mt: 5 }} />
             </Grid>

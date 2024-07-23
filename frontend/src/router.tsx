@@ -12,7 +12,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/login",
-    element: StorageService.getAuthToken() ? <SignIn/> : <Home />
+    element: !StorageService.getAuthToken() ? <SignIn/> : <Home />
   },
 ]);
 

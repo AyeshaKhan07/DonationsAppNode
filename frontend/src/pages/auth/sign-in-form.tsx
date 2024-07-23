@@ -9,12 +9,19 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
-import { SignInProps } from '../../types/auth/sign-in.types';
-import { useState } from 'react';
+import { ISignInPayload, SignInProps } from '../../types/auth/sign-in.types';
 
-export default function SignInForm({ handleSubmit, setAlreadyRegistered }: SignInProps) {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+export default function SignInForm({ handleSignin, setAlreadyRegistered }: SignInProps) {
+
+    const submitForm = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        const data = new FormData(event.currentTarget);
+        const signInPayload: ISignInPayload = {
+            email: String(data.get("email")),
+            password: String(data.get("password")),
+        }
+        await handleSignin(signInPayload)
+    };
 
     return <Box
         sx={{
@@ -31,11 +38,9 @@ export default function SignInForm({ handleSubmit, setAlreadyRegistered }: SignI
         <Typography component="h1" variant="h5">
             Sign in
         </Typography>
-        <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+        <Box component="form" noValidate onSubmit={submitForm} sx={{ mt: 1 }}>
             <TextField
                 margin="normal"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
                 required
                 fullWidth
                 id="email"
@@ -53,8 +58,6 @@ export default function SignInForm({ handleSubmit, setAlreadyRegistered }: SignI
                 type="password"
                 id="password"
                 autoComplete="current-password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
             />
             <FormControlLabel
                 control={<Checkbox value="remember" color="primary" />}

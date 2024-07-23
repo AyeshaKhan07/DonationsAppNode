@@ -1,4 +1,5 @@
 import * as express from "express"
+import * as cors from 'cors';
 import Route from './abstracts/router.abstract';
 import { establishConnection } from './database';
 
@@ -11,8 +12,14 @@ class App {
         this.port = port;
 
         establishConnection();
+        this.initializeCors();
         this.initalizeMiddleware(middlewares);
         this.initializeRoutes(routers);
+    }
+
+    private initializeCors() {
+        const corsOptions = {origin: 'http://localhost:5173'}
+        this.app.use(cors(corsOptions))
     }
 
     private initalizeMiddleware(middlewares: any[]) {
