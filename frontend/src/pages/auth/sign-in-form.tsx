@@ -10,8 +10,12 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { SignInProps } from '../../types/auth/sign-in.types';
+import { useState } from 'react';
 
 export default function SignInForm({ handleSubmit, setAlreadyRegistered }: SignInProps) {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
     return <Box
         sx={{
             my: 8,
@@ -30,6 +34,8 @@ export default function SignInForm({ handleSubmit, setAlreadyRegistered }: SignI
         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
             <TextField
                 margin="normal"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
                 required
                 fullWidth
                 id="email"
@@ -47,6 +53,8 @@ export default function SignInForm({ handleSubmit, setAlreadyRegistered }: SignI
                 type="password"
                 id="password"
                 autoComplete="current-password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
             />
             <FormControlLabel
                 control={<Checkbox value="remember" color="primary" />}
