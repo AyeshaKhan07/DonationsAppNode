@@ -1,17 +1,19 @@
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { ISignUpPayload, SignUpProps } from '../../types/auth/sign-up.types';
+import { useState } from 'react';
+import ButtonWithLoader from '../../components/button-with-loader.component';
 import PasswordInput from '../../components/password-textfield.component';
+import { ISignUpPayload, SignUpProps } from '../../types/auth/sign-up.types';
 
 export default function SignUpForm({ handleSignup, setAlreadyRegistered }: SignUpProps) {
+    const [loading, setLoading] = useState(false)
 
     const submitForm = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -23,7 +25,13 @@ export default function SignUpForm({ handleSignup, setAlreadyRegistered }: SignU
             contact: String(data.get("contact")),
             password: String(data.get("password")),
         }
-        await handleSignup(signupPayload)
+        setLoading(true)
+        try {
+            await handleSignup(signupPayload)
+        } finally {
+            setLoading(false)
+        }
+        
     };
 
     return <Box
@@ -93,15 +101,6 @@ export default function SignUpForm({ handleSignup, setAlreadyRegistered }: SignU
                         fullWidth
                         required
                     />
-                    {/* <TextField
-                        required
-                        fullWidth
-                        name="password"
-                        label="Password"
-                        type="password"
-                        id="password"
-                        autoComplete="new-password"
-                    /> */}
                 </Grid>
                 <Grid item xs={6}>
                     <PasswordInput
@@ -112,14 +111,6 @@ export default function SignUpForm({ handleSignup, setAlreadyRegistered }: SignU
                         fullWidth
                         required
                     />
-                    {/* <TextField
-                        required
-                        fullWidth
-                        name="confirmPassword"
-                        label="Confirm Password"
-                        type="password"
-                        id="confirmPassword"
-                    /> */}
                 </Grid>
                 <Grid item xs={12}>
                     <FormControlLabel
@@ -128,14 +119,16 @@ export default function SignUpForm({ handleSignup, setAlreadyRegistered }: SignU
                     />
                 </Grid>
             </Grid>
-            <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-            >
-                Sign Up
-            </Button>
+            <ButtonWithLoader
+                loading={loading}
+                text='Sign Up'
+                buttonProps={{
+                    fullWidth: true,
+                    variant: "contained",
+                    sx: { mt: 3, mb: 2 },
+                    type: "submit"
+                }}
+            />
             <Grid container justifyContent="flex-end">
                 <Grid item>
                     <Link href="#" variant="body2" onClick={() => setAlreadyRegistered(true)}>

@@ -17,24 +17,24 @@ export default class ApiService {
         axios.defaults.headers.common = {}
     }
 
-    static get(url: string) {
+    static get<T>(url: string): Promise<AxiosResponse<T>> {
         this.setHeader()
-        return axios.get(url)
+        return axios.get<T>(url)
     }
 
     static post<T>(url: string, data: any): Promise<AxiosResponse<T>> {
-        this.setHeader
+        this.setHeader()
         return axios.post<T>(url, data)
     }
 
-    static put(url: string, data: any) {
-        this.setHeader
-        return axios.put(url, data)
+    static put<T>(url: string, data: any): Promise<AxiosResponse<T>> {
+        this.setHeader()
+        return axios.put<T>(url, data)
     }
 
-    static delete(url: string) {
-        this.setHeader
-        return axios.delete(url)
+    static delete<T>(url: string): Promise<AxiosResponse<T>> {
+        this.setHeader()
+        return axios.delete<T>(url)
     }
 
     /**

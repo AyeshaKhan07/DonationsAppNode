@@ -1,6 +1,6 @@
 
+import { useState } from 'react';
 import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
@@ -9,9 +9,12 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
+
 import { ISignInPayload, SignInProps } from '../../types/auth/sign-in.types';
+import ButtonWithLoader from '../../components/button-with-loader.component';
 
 export default function SignInForm({ handleSignin, setAlreadyRegistered }: SignInProps) {
+    const [loading, setLoading] = useState(false)
 
     const submitForm = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -20,7 +23,12 @@ export default function SignInForm({ handleSignin, setAlreadyRegistered }: SignI
             email: String(data.get("email")),
             password: String(data.get("password")),
         }
-        await handleSignin(signInPayload)
+        setLoading(true)
+        try {
+            await handleSignin(signInPayload)
+        } finally {
+            setLoading(false)
+        }
     };
 
     return <Box
@@ -63,14 +71,16 @@ export default function SignInForm({ handleSignin, setAlreadyRegistered }: SignI
                 control={<Checkbox value="remember" color="primary" />}
                 label="Remember me"
             />
-            <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-            >
-                Sign In
-            </Button>
+            <ButtonWithLoader
+                loading={loading}
+                text='Sign In'
+                buttonProps={{
+                    fullWidth: true,
+                    variant: "contained",
+                    sx: { mt: 3, mb: 2 },
+                    type: "submit"
+                }}
+            />
             <Grid container>
                 <Grid item xs>
                     <Link href="#" variant="body2">
